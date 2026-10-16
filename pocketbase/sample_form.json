@@ -1,0 +1,58 @@
+{
+  "title": "Survei Kepuasan Layanan & Evaluasi Sistem 2026",
+  "description": "Kuesioner evaluasi kualitas pengalaman pengguna dan performa sistem layanan.",
+  "is_active": true,
+  "questions": [
+    {
+      "q_id": "q_01",
+      "type": "text",
+      "label": "Siapa nama lengkap Anda?",
+      "required": true
+    },
+    {
+      "q_id": "q_02",
+      "type": "dropdown",
+      "label": "Dari divisi atau departemen mana Anda berasal?",
+      "required": true,
+      "options": [
+        "Teknologi Informasi & Sistem",
+        "Operasional & Logistik",
+        "Keuangan & Akuntansi",
+        "Pemasaran & Penjualan",
+        "Sumber Daya Manusia"
+      ]
+    },
+    {
+      "q_id": "q_03",
+      "type": "radio",
+      "label": "Seberapa puas Anda terhadap keandalan dashboard saat ini?",
+      "required": true,
+      "options": [
+        "Sangat Puas",
+        "Puas",
+        "Netral / Cukup",
+        "Kurang Puas",
+        "Sangat Tidak Puas"
+      ]
+    },
+    {
+      "q_id": "q_04",
+      "type": "checkbox",
+      "label": "Fitur apa saja yang paling sering Anda gunakan? (Bisa pilih lebih dari satu)",
+      "required": false,
+      "options": [
+        "Analisis Grafik Real-time",
+        "Ekspor Laporan (Excel/PDF)",
+        "Filter Kategori & Tanggal",
+        "Pencarian Data Cepat",
+        "Notifikasi Status"
+      ]
+    },
+    {
+      "q_id": "q_05",
+      "type": "textarea",
+      "label": "Tuliskan saran atau masukan Anda untuk peningkatan fitur di masa mendatang:",
+      "required": false
+    }
+  ]
+}
