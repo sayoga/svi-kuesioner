@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname, useSearchParams } from 'next/navigation';
 import {
   LayoutDashboard,
@@ -70,10 +71,14 @@ export function AdminSidebar({ mobileOpen, onCloseMobile }: AdminSidebarProps) {
           href="/"
           className="flex items-center group focus:outline-none"
         >
-          <span className="inline-flex items-start font-extrabold text-[#DF1A3D] group-hover:text-red-500 transition-colors tracking-tight text-base sm:text-lg">
-            SHARING VISION
-            <span className="text-[0.6em] font-bold leading-none ml-[2px] pt-[0.1em]">™</span>
-          </span>
+          <Image
+            src="/Logo-Sharingvision-Main.png"
+            alt="Sharing Vision Logo"
+            width={140}
+            height={28}
+            className="h-7 w-auto object-contain transition-opacity group-hover:opacity-85"
+            priority
+          />
         </Link>
 
         {/* Mobile close button */}

@@ -76,7 +76,7 @@ export function LogoutConfirmModal({ triggerClassName }: LogoutConfirmModalProps
         title="Keluar dari Admin Portal"
         className={
           triggerClassName ||
-          'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-rose-200 dark:border-rose-500/30 bg-rose-50 dark:bg-rose-500/10 hover:bg-rose-100 dark:hover:bg-rose-500/20 text-rose-700 dark:text-rose-300 text-xs font-semibold shadow-xs transition-colors cursor-pointer'
+          'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-rose-200 dark:border-rose-500/30 bg-rose-50 dark:bg-rose-500/10 hover:bg-rose-100 dark:hover:bg-rose-500/20 text-rose-700 dark:text-rose-300 text-xs font-semibold shadow-xs transition-colors cursor-pointer shrink-0'
         }
       >
         <LogOut className="w-3.5 h-3.5" />

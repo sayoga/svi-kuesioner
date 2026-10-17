@@ -190,9 +190,9 @@ export function AdminHeader({ forms, onOpenMobileSidebar }: AdminHeaderProps) {
 
   return (
     <>
-      <header className="sticky top-0 z-30 bg-white/80 dark:bg-[#0A0A0A]/80 backdrop-blur-xl border-b border-slate-200 dark:border-white/10 px-3 sm:px-6 lg:px-8 h-16 sm:h-18 flex items-center justify-between gap-2.5 sm:gap-4 shadow-xs text-slate-800 dark:text-slate-100 transition-colors duration-300">
+      <header className="sticky top-0 z-30 bg-white/80 dark:bg-[#0A0A0A]/80 backdrop-blur-xl border-b border-slate-200 dark:border-white/10 px-3 sm:px-6 lg:px-8 py-2.5 sm:py-0 min-h-16 sm:h-18 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-4 shadow-xs text-slate-800 dark:text-slate-100 transition-colors duration-300">
         {/* Left side: Hamburger button + Title + Searchable Combobox */}
-        <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
+        <div className="flex items-center gap-2 sm:gap-3 min-w-0 w-full sm:w-auto sm:flex-1">
           <button
             onClick={onOpenMobileSidebar}
             className="md:hidden p-2 -ml-1 rounded-xl text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-white/10 focus:outline-none shrink-0"
@@ -213,14 +213,14 @@ export function AdminHeader({ forms, onOpenMobileSidebar }: AdminHeaderProps) {
           </div>
 
           {/* Searchable Combobox Component */}
-          <div ref={comboboxRef} className="relative flex-1 max-w-md min-w-[130px] sm:min-w-[200px]">
+          <div ref={comboboxRef} className="relative flex-1 min-w-0 max-w-full sm:max-w-md">
             {/* Trigger Button */}
             <button
               type="button"
               onClick={() => setIsOpen((prev) => !prev)}
               aria-haspopup="listbox"
               aria-expanded={isOpen}
-              className={`w-full flex items-center justify-between gap-2.5 px-3.5 py-2 rounded-xl border text-left text-xs sm:text-sm font-semibold transition-all shadow-xs ${
+              className={`w-full flex items-center justify-between gap-2 sm:gap-2.5 px-3 sm:px-3.5 py-2 rounded-xl border text-left text-xs sm:text-sm font-semibold transition-all shadow-xs min-w-0 ${
                 isOpen
                   ? 'border-[#DF1A3D] ring-2 ring-[#DF1A3D]/20 bg-white dark:bg-white/10 text-slate-900 dark:text-white'
                   : 'border-slate-200 dark:border-white/15 bg-slate-50 dark:bg-white/[0.05] hover:border-slate-300 dark:hover:border-white/25 text-slate-800 dark:text-slate-100'
@@ -254,7 +254,7 @@ export function AdminHeader({ forms, onOpenMobileSidebar }: AdminHeaderProps) {
 
             {/* Dropdown Popover */}
             {isOpen && (
-              <div className="absolute left-0 top-full mt-1.5 w-full min-w-[280px] sm:min-w-[360px] bg-white dark:bg-[#141414] rounded-2xl shadow-xl border border-slate-200 dark:border-white/10 z-50 overflow-hidden divide-y divide-slate-100 dark:divide-white/10 animate-in fade-in slide-in-from-top-2 duration-150">
+              <div className="absolute left-0 top-full mt-1.5 w-full min-w-[280px] sm:min-w-[360px] max-w-[calc(100vw-1.5rem)] bg-white dark:bg-[#141414] rounded-2xl shadow-xl border border-slate-200 dark:border-white/10 z-50 overflow-hidden divide-y divide-slate-100 dark:divide-white/10 animate-in fade-in slide-in-from-top-2 duration-150">
                 {/* Search Field */}
                 <div className="p-2.5 bg-slate-50/50 dark:bg-white/[0.03]">
                   <div className="relative">
@@ -370,11 +370,11 @@ export function AdminHeader({ forms, onOpenMobileSidebar }: AdminHeaderProps) {
         </div>
 
         {/* Right side: Interactive Status Toggle Switch, Public Link, Theme Switcher & Logout */}
-        <div className="flex items-center gap-2.5 sm:gap-3 shrink-0">
+        <div className="flex items-center justify-between sm:justify-end gap-2 sm:gap-3 shrink-0 w-full sm:w-auto">
           {selectedForm ? (
-            <div className="flex items-center gap-2.5 sm:gap-3">
+            <div className="flex items-center gap-2 sm:gap-3 shrink-0">
               {/* Interactive Status Toggle Switch */}
-              <div className="flex items-center gap-2 bg-slate-100 dark:bg-white/[0.04] sm:bg-transparent px-2.5 sm:px-0 py-1.5 sm:py-0 rounded-xl border border-slate-200 dark:border-white/10 sm:border-0">
+              <div className="flex items-center gap-1.5 sm:gap-2 bg-slate-100 dark:bg-white/[0.04] sm:bg-transparent px-2 sm:px-0 py-1.5 sm:py-0 rounded-xl border border-slate-200 dark:border-white/10 sm:border-0 shrink-0">
                 <span className="text-xs font-semibold text-slate-600 dark:text-slate-400 hidden md:inline">
                   Status:
                 </span>
@@ -409,7 +409,7 @@ export function AdminHeader({ forms, onOpenMobileSidebar }: AdminHeaderProps) {
 
                 {/* Label Status Badge */}
                 <span
-                  className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-semibold border transition-all ${
+                  className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-semibold border transition-all shrink-0 ${
                     isCurrentFormActive
                       ? 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-500/15 dark:text-emerald-300 dark:border-emerald-500/30'
                       : 'bg-slate-100 text-slate-600 border-slate-200 dark:bg-slate-800/80 dark:text-slate-400 dark:border-white/10'
@@ -420,7 +420,7 @@ export function AdminHeader({ forms, onOpenMobileSidebar }: AdminHeaderProps) {
                       isCurrentFormActive ? 'bg-emerald-500 shadow-[0_0_6px_rgba(16,185,129,0.8)]' : 'bg-slate-400'
                     }`}
                   />
-                  <span className="hidden sm:inline">{isCurrentFormActive ? 'Aktif' : 'Nonaktif'}</span>
+                  <span>{isCurrentFormActive ? 'Aktif' : 'Nonaktif'}</span>
                 </span>
               </div>
 
@@ -429,7 +429,7 @@ export function AdminHeader({ forms, onOpenMobileSidebar }: AdminHeaderProps) {
                 href={`/form/${selectedForm.id}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl border border-rose-200 dark:border-rose-500/20 bg-rose-50 dark:bg-rose-500/10 hover:bg-rose-100 dark:hover:bg-rose-500/20 text-rose-700 dark:text-rose-300 text-xs font-semibold shadow-xs transition-colors"
+                className="inline-flex items-center gap-1.5 px-2 sm:px-3 py-1.5 rounded-xl border border-rose-200 dark:border-rose-500/20 bg-rose-50 dark:bg-rose-500/10 hover:bg-rose-100 dark:hover:bg-rose-500/20 text-rose-700 dark:text-rose-300 text-xs font-semibold shadow-xs transition-colors shrink-0"
                 title={`Buka formulir publik untuk ${selectedForm.title}`}
               >
                 <ExternalLink className="w-3.5 h-3.5 text-[#DF1A3D]" />
@@ -437,17 +437,20 @@ export function AdminHeader({ forms, onOpenMobileSidebar }: AdminHeaderProps) {
               </a>
             </div>
           ) : (
-            <span className="text-xs text-slate-500 dark:text-slate-400 hidden sm:inline-flex items-center gap-1.5">
+            <div className="flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400 shrink-0">
               <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-              Pilih kuesioner
-            </span>
+              <span>Pilih kuesioner</span>
+            </div>
           )}
 
-          {/* Minimalist Theme Toggle (Light / Dark / System) */}
-          <ThemeToggle />
+          {/* Right actions: ThemeToggle + LogoutConfirmModal */}
+          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+            {/* Minimalist Theme Toggle (Light / Dark / System) */}
+            <ThemeToggle />
 
-          {/* Logout Action with Confirmation Modal */}
-          <LogoutConfirmModal />
+            {/* Logout Action with Confirmation Modal */}
+            <LogoutConfirmModal />
+          </div>
         </div>
       </header>
 

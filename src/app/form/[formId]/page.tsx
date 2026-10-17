@@ -1,6 +1,7 @@
 import { Suspense } from 'react';
 import { connection } from 'next/server';
 import Link from 'next/link';
+import Image from 'next/image';
 import { formsService } from '@/services/forms.service';
 import { RespondentForm } from '@/components/RespondentForm';
 import { CurrentYear } from '@/components/CurrentYear';
@@ -19,6 +20,7 @@ interface PageProps {
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  await connection();
   const resolvedParams = await params;
   const formId = resolvedParams.formId;
   try {
@@ -41,10 +43,14 @@ function FormLoadingFallback() {
       <header className="w-full bg-white border-b border-slate-100 shadow-sm">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-18 flex items-center justify-between">
           <div className="flex items-center">
-            <span className="inline-flex items-start font-extrabold tracking-tight text-base sm:text-lg text-[#DF1A3D]">
-              SHARING VISION
-              <span className="text-[0.6em] font-bold leading-none ml-[2px] pt-[0.1em]">™</span>
-            </span>
+            <Image
+              src="/Logo-Sharingvision-Main.png"
+              alt="Sharing Vision Logo"
+              width={150}
+              height={30}
+              className="h-7 sm:h-7.5 w-auto object-contain"
+              priority
+            />
           </div>
         </div>
       </header>
@@ -76,10 +82,14 @@ function InactiveFormState({ title }: { title: string }) {
       <header className="w-full bg-white border-b border-slate-100 shadow-sm relative z-20">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-18 flex items-center justify-between">
           <Link href="/" className="flex items-center group">
-            <span className="inline-flex items-start font-extrabold tracking-tight text-base sm:text-lg text-[#DF1A3D] group-hover:text-red-500 transition-colors">
-              SHARING VISION
-              <span className="text-[0.6em] font-bold leading-none ml-[2px] pt-[0.1em]">™</span>
-            </span>
+            <Image
+              src="/Logo-Sharingvision-Main.png"
+              alt="Sharing Vision Logo"
+              width={150}
+              height={30}
+              className="h-7 sm:h-7.5 w-auto object-contain transition-opacity group-hover:opacity-85"
+              priority
+            />
           </Link>
         </div>
       </header>
@@ -169,10 +179,14 @@ function FormNotFoundState() {
       <header className="w-full bg-white border-b border-slate-100 shadow-sm">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-18 flex items-center justify-between">
           <Link href="/" className="flex items-center group">
-            <span className="inline-flex items-start font-extrabold tracking-tight text-base sm:text-lg text-[#DF1A3D] group-hover:text-red-500 transition-colors">
-              SHARING VISION
-              <span className="text-[0.6em] font-bold leading-none ml-[2px] pt-[0.1em]">™</span>
-            </span>
+            <Image
+              src="/Logo-Sharingvision-Main.png"
+              alt="Sharing Vision Logo"
+              width={150}
+              height={30}
+              className="h-7 sm:h-7.5 w-auto object-contain transition-opacity group-hover:opacity-85"
+              priority
+            />
           </Link>
         </div>
       </header>
@@ -233,10 +247,14 @@ async function FormContent({ params }: PageProps) {
       <header className="sticky top-0 z-50 w-full bg-white border-b border-slate-100 shadow-sm">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-18 flex items-center justify-between">
           <Link href="/" className="flex items-center group">
-            <span className="inline-flex items-start font-extrabold tracking-tight text-base sm:text-lg text-[#DF1A3D] group-hover:text-red-500 transition-colors">
-              SHARING VISION
-              <span className="text-[0.6em] font-bold leading-none ml-[2px] pt-[0.1em]">™</span>
-            </span>
+            <Image
+              src="/Logo-Sharingvision-Main.png"
+              alt="Sharing Vision Logo"
+              width={150}
+              height={30}
+              className="h-7 sm:h-7.5 w-auto object-contain transition-opacity group-hover:opacity-85"
+              priority
+            />
           </Link>
         </div>
       </header>
@@ -310,11 +328,14 @@ async function FormContent({ params }: PageProps) {
       {/* SHARING VISION™ Light Footer */}
       <footer className="border-t border-[#E2E8F0] bg-white/80 backdrop-blur-sm py-8 relative z-10 text-xs text-[#64748B]">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
-            <span className="inline-flex items-start font-extrabold text-[#DF1A3D]">
-              SHARING VISION
-              <span className="text-[0.6em] font-bold leading-none ml-[2px] pt-[0.1em]">™</span>
-            </span>
+          <div className="flex items-center gap-2.5">
+            <Image
+              src="/Logo-Sharingvision-Main.png"
+              alt="Sharing Vision Logo"
+              width={110}
+              height={22}
+              className="h-5 w-auto object-contain"
+            />
             <span>&copy; <CurrentYear /> PT. Sharing Vision Indonesia. Hak Cipta Dilindungi</span>
           </div>
           <div className="flex items-center gap-4">

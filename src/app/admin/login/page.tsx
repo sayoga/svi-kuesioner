@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { loginAdminAction } from '@/actions/auth';
 import { CurrentYear } from '@/components/CurrentYear';
@@ -59,10 +60,14 @@ export default function AdminLoginPage() {
       {/* Unified Top Navbar */}
       <header className="w-full bg-white border-b border-slate-200 py-4 px-6 md:px-12 flex items-center justify-between">
         <Link href="/" className="flex items-center group focus:outline-none">
-          <span className="inline-flex items-start font-extrabold text-[#DF1A3D] group-hover:text-red-500 transition-colors tracking-tight text-lg sm:text-xl">
-            SHARING VISION
-            <span className="text-[0.6em] font-bold leading-none ml-[2px] pt-[0.1em]">™</span>
-          </span>
+          <Image
+            src="/Logo-Sharingvision-Main.png"
+            alt="Sharing Vision Logo"
+            width={160}
+            height={32}
+            className="h-8 w-auto object-contain transition-opacity group-hover:opacity-85"
+            priority
+          />
         </Link>
       </header>
 

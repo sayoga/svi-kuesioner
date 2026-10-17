@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { ClipboardList, BarChart3, Sparkles } from 'lucide-react';
 
 interface NavbarProps {
@@ -16,12 +17,16 @@ export function Navbar({ activeFormId, isAdmin = false }: NavbarProps) {
         {/* Brand Logo */}
         <Link
           href="/"
-          className="flex items-center gap-2 group focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-500 rounded-lg"
+          className="flex items-center gap-2.5 group focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-500 rounded-lg"
         >
-          <span className="inline-flex items-start font-bold text-[#DF1A3D] group-hover:text-red-500 transition-colors tracking-tight text-lg">
-            SHARING VISION
-            <span className="text-[0.6em] font-bold leading-none ml-[2px] pt-[0.1em]">™</span>
-          </span>
+          <Image
+            src="/Logo-Sharingvision-Main.png"
+            alt="Sharing Vision Logo"
+            width={150}
+            height={30}
+            className="h-7.5 w-auto object-contain transition-opacity group-hover:opacity-85"
+            priority
+          />
           <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-semibold bg-rose-50 text-rose-700 border border-rose-200/60">
             v1.0
           </span>

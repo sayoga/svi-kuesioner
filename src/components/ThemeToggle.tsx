@@ -14,7 +14,7 @@ export function ThemeToggle() {
 
   if (!mounted) {
     return (
-      <div className="w-24 h-8 bg-slate-100 dark:bg-white/5 rounded-full border border-slate-200 dark:border-white/10 animate-pulse" />
+      <div className="w-24 h-8 bg-slate-100 dark:bg-white/5 rounded-full border border-slate-200 dark:border-white/10 animate-pulse shrink-0" />
     );
   }
 
@@ -22,7 +22,7 @@ export function ThemeToggle() {
     <div
       role="group"
       aria-label="Pilih Tema"
-      className="inline-flex items-center p-1 rounded-full bg-slate-100 dark:bg-[#181818] border border-slate-200 dark:border-white/10 shadow-xs transition-colors"
+      className="inline-flex items-center p-1 rounded-full bg-slate-100 dark:bg-[#181818] border border-slate-200 dark:border-white/10 shadow-xs transition-colors shrink-0"
     >
       <button
         type="button"

@@ -1,5 +1,7 @@
 import { Suspense } from 'react';
+import { connection } from 'next/server';
 import Link from 'next/link';
+import Image from 'next/image';
 import { formsService } from '@/services/forms.service';
 import {
   ClipboardList,
@@ -24,6 +26,7 @@ export const metadata: Metadata = {
  * Runs within a <Suspense> boundary to avoid blocking PPR
  */
 async function ActiveFormsList() {
+  await connection();
   let activeForms: FormRecord[] = [];
   try {
     const res = await formsService.getForms({ isActive: true, perPage: 6 });
@@ -102,10 +105,14 @@ export default function LandingPage() {
       <header className="sticky top-0 z-40 w-full bg-white border-b border-slate-200 shadow-xs">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-18 flex items-center justify-between">
           <Link href="/" className="flex items-center group focus:outline-none">
-            <span className="inline-flex items-start font-extrabold text-[#DF1A3D] group-hover:text-red-500 transition-colors tracking-tight text-lg sm:text-xl">
-              SHARING VISION
-              <span className="text-[0.6em] font-bold leading-none ml-[2px] pt-[0.1em]">™</span>
-            </span>
+            <Image
+              src="/Logo-Sharingvision-Main.png"
+              alt="Sharing Vision Logo"
+              width={160}
+              height={32}
+              className="h-8 w-auto object-contain transition-opacity group-hover:opacity-85"
+              priority
+            />
           </Link>
           <Link
             href="/admin/login"
@@ -194,10 +201,13 @@ export default function LandingPage() {
       <footer className="border-t border-slate-200 bg-white py-6 text-xs text-slate-500">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2.5">
-            <span className="inline-flex items-start font-extrabold text-[#DF1A3D] text-xs">
-              SHARING VISION
-              <span className="text-[0.6em] font-bold leading-none ml-[2px] pt-[0.1em]">™</span>
-            </span>
+            <Image
+              src="/Logo-Sharingvision-Main.png"
+              alt="Sharing Vision Logo"
+              width={110}
+              height={22}
+              className="h-5 w-auto object-contain"
+            />
             <span className="font-medium text-slate-600">
               PT. Sharing Vision Indonesia &bull; Portal Survei Digital
             </span>
