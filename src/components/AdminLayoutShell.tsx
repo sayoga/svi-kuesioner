@@ -35,9 +35,9 @@ export function AdminLayoutShell({ forms, children }: AdminLayoutShellProps) {
           onOpenMobileSidebar={() => setMobileOpen(true)}
         />
 
-        <div className="flex-1 min-w-0 flex flex-col">
+        <main className="flex-1 min-w-0 flex flex-col">
           {children}
-        </div>
+        </main>
       </div>
     </div>
   );

@@ -103,7 +103,7 @@ export default function LandingPage() {
     <div className="bg-slate-50 min-h-screen text-slate-900 flex flex-col font-sans selection:bg-red-600 selection:text-white antialiased">
       {/* Solid White Top Bar */}
       <header className="sticky top-0 z-40 w-full bg-white border-b border-slate-200 shadow-xs">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-18 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center group focus:outline-none">
             <Image
               src="/Logo-Sharingvision-Main.png"
@@ -130,7 +130,7 @@ export default function LandingPage() {
         <div className="lg:col-span-5 flex flex-col gap-5 sm:gap-6 lg:sticky lg:top-24">
           <div className="space-y-3 sm:space-y-4">
             <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-slate-900 tracking-tight leading-tight">
-              Portal Survei &amp; Analitik
+              Portal Kuesioner &amp; Analitik
             </h1>
             <p className="text-xs sm:text-sm md:text-base text-slate-600 leading-relaxed">
               Platform kuesioner digital dan pengumpulan tanggapan terintegrasi untuk kebutuhan survei, riset pasar, dan evaluasi berkala.
@@ -209,7 +209,7 @@ export default function LandingPage() {
               className="h-5 w-auto object-contain"
             />
             <span className="font-medium text-slate-600">
-              PT. Sharing Vision Indonesia &bull; Portal Survei Digital
+              PT. Sharing Vision Indonesia &bull; Portal Kuesioner Digital
             </span>
           </div>
           <div className="flex items-center gap-4 text-slate-500">

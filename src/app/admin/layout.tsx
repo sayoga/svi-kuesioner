@@ -34,8 +34,8 @@ export default function AdminLayout({
               <Image
                 src="/Logo-Sharingvision-Main.png"
                 alt="Sharing Vision Logo"
-                width={150}
-                height={30}
+                width={160}
+                height={32}
                 className="h-8 w-auto object-contain mb-1"
                 priority
               />

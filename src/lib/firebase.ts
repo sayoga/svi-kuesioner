@@ -86,6 +86,3 @@ export function formatFirebaseError(error: unknown): ApiErrorResponse {
     details: null,
   };
 }
-
-// Backwards-compatible alias for seamless drop-in transition
-export const formatPocketBaseError = formatFirebaseError;

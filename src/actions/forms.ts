@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache';
 import { ZodError } from 'zod';
 import { formatFirebaseError } from '@/lib/firebase';
 import { formsService } from '@/services/forms.service';
+import { logActivity } from '@/services/audit.service';
 import type { CreateFormInput, FormListQueryParams, UpdateFormInput } from '@/types/form';
 
 export type ActionResponse<T> =
@@ -43,6 +44,13 @@ export async function createFormAction(input: CreateFormInput) {
     const created = await formsService.createForm(input);
     revalidatePath('/forms');
     revalidatePath('/dashboard');
+
+    // Non-blocking background audit log
+    void logActivity({
+      action: 'CREATE_FORM',
+      details: `Created new form: ${created.title}`,
+    }).catch((logErr) => console.error('Audit log failed:', logErr));
+
     return {
       success: true as const,
       data: created,
@@ -74,6 +82,13 @@ export async function updateFormAction(id: string, input: UpdateFormInput) {
     revalidatePath('/forms');
     revalidatePath(`/forms/${id}`);
     revalidatePath('/dashboard');
+
+    // Non-blocking background audit log
+    void logActivity({
+      action: 'UPDATE_FORM',
+      details: `Updated form: ${updated.title || id}`,
+    }).catch((logErr) => console.error('Audit log failed:', logErr));
+
     return {
       success: true as const,
       data: updated,
@@ -101,9 +116,24 @@ export async function updateFormAction(id: string, input: UpdateFormInput) {
 
 export async function deleteFormAction(id: string) {
   try {
+    let formTitle = id;
+    try {
+      const existing = await formsService.getFormById(id);
+      if (existing?.title) formTitle = existing.title;
+    } catch {
+      // ignore
+    }
+
     await formsService.deleteForm(id);
     revalidatePath('/forms');
     revalidatePath('/dashboard');
+
+    // Non-blocking background audit log
+    void logActivity({
+      action: 'DELETE_FORM',
+      details: `Deleted form: ${formTitle} (ID: ${id})`,
+    }).catch((logErr) => console.error('Audit log failed:', logErr));
+
     return {
       success: true as const,
       data: null,
@@ -124,6 +154,14 @@ export async function toggleFormStatusAction(id: string, isActive: boolean) {
     const updated = await formsService.setFormStatus(id, isActive);
     revalidatePath('/forms');
     revalidatePath('/dashboard');
+
+    const statusLabel = isActive ? 'Active' : 'Inactive';
+    // Non-blocking background audit log
+    void logActivity({
+      action: 'CHANGE_FORM_STATUS',
+      details: `Changed status to ${statusLabel} for form: ${updated.title || id}`,
+    }).catch((logErr) => console.error('Audit log failed:', logErr));
+
     return {
       success: true as const,
       data: updated,
@@ -138,3 +176,4 @@ export async function toggleFormStatusAction(id: string, isActive: boolean) {
     };
   }
 }
+

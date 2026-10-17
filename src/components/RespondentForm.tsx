@@ -2,14 +2,12 @@
 
 import { useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
-import Link from 'next/link';
 import {
   CheckCircle2,
   AlertCircle,
   Loader2,
   Send,
   RotateCcw,
-  BarChart3,
   User,
   ShieldCheck,
   Sparkles,

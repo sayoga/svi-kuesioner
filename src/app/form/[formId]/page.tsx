@@ -40,15 +40,15 @@ function FormLoadingFallback() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#8C0E2B] via-[#A31633] via-30% via-[#C1324E] via-50% to-[#F8FAFC] to-90% bg-no-repeat text-[#1E293B] flex flex-col font-sans">
       {/* Solid White Top Bar */}
-      <header className="w-full bg-white border-b border-slate-100 shadow-sm">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-18 flex items-center justify-between">
+      <header className="w-full bg-white border-b border-slate-200 shadow-xs">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center">
             <Image
               src="/Logo-Sharingvision-Main.png"
               alt="Sharing Vision Logo"
-              width={150}
-              height={30}
-              className="h-7 sm:h-7.5 w-auto object-contain"
+              width={160}
+              height={32}
+              className="h-8 w-auto object-contain"
               priority
             />
           </div>
@@ -79,15 +79,15 @@ function InactiveFormState({ title }: { title: string }) {
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#8C0E2B] via-[#A31633] via-30% via-[#C1324E] via-50% to-[#F8FAFC] to-90% bg-no-repeat text-[#1E293B] flex flex-col font-sans relative selection:bg-red-600 selection:text-white">
       {/* Solid White Top Bar */}
-      <header className="w-full bg-white border-b border-slate-100 shadow-sm relative z-20">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-18 flex items-center justify-between">
-          <Link href="/" className="flex items-center group">
+      <header className="w-full bg-white border-b border-slate-200 shadow-xs relative z-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+          <Link href="/" className="flex items-center group focus:outline-none">
             <Image
               src="/Logo-Sharingvision-Main.png"
               alt="Sharing Vision Logo"
-              width={150}
-              height={30}
-              className="h-7 sm:h-7.5 w-auto object-contain transition-opacity group-hover:opacity-85"
+              width={160}
+              height={32}
+              className="h-8 w-auto object-contain transition-opacity group-hover:opacity-85"
               priority
             />
           </Link>
@@ -96,7 +96,7 @@ function InactiveFormState({ title }: { title: string }) {
 
       {/* Subtle organic curl wave trails */}
       <div
-        className="absolute top-16 sm:top-18 left-0 right-0 h-[520px] pointer-events-none overflow-hidden opacity-10 z-0"
+        className="absolute top-16 left-0 right-0 h-[520px] pointer-events-none overflow-hidden opacity-10 z-0"
         aria-hidden="true"
       >
         <svg
@@ -176,15 +176,15 @@ function FormNotFoundState() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#8C0E2B] via-[#A31633] via-30% via-[#C1324E] via-50% to-[#F8FAFC] to-90% bg-no-repeat text-[#1E293B] flex flex-col font-sans">
       {/* Solid White Top Bar */}
-      <header className="w-full bg-white border-b border-slate-100 shadow-sm">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-18 flex items-center justify-between">
-          <Link href="/" className="flex items-center group">
+      <header className="w-full bg-white border-b border-slate-200 shadow-xs">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+          <Link href="/" className="flex items-center group focus:outline-none">
             <Image
               src="/Logo-Sharingvision-Main.png"
               alt="Sharing Vision Logo"
-              width={150}
-              height={30}
-              className="h-7 sm:h-7.5 w-auto object-contain transition-opacity group-hover:opacity-85"
+              width={160}
+              height={32}
+              className="h-8 w-auto object-contain transition-opacity group-hover:opacity-85"
               priority
             />
           </Link>
@@ -244,15 +244,15 @@ async function FormContent({ params }: PageProps) {
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#8C0E2B] via-[#A31633] via-30% via-[#C1324E] via-50% to-[#F8FAFC] to-90% bg-no-repeat text-[#1E293B] flex flex-col font-sans relative selection:bg-red-600 selection:text-white antialiased">
       {/* 100% Solid White Top Bar */}
-      <header className="sticky top-0 z-50 w-full bg-white border-b border-slate-100 shadow-sm">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-18 flex items-center justify-between">
-          <Link href="/" className="flex items-center group">
+      <header className="sticky top-0 z-50 w-full bg-white border-b border-slate-200 shadow-xs">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+          <Link href="/" className="flex items-center group focus:outline-none">
             <Image
               src="/Logo-Sharingvision-Main.png"
               alt="Sharing Vision Logo"
-              width={150}
-              height={30}
-              className="h-7 sm:h-7.5 w-auto object-contain transition-opacity group-hover:opacity-85"
+              width={160}
+              height={32}
+              className="h-8 w-auto object-contain transition-opacity group-hover:opacity-85"
               priority
             />
           </Link>
@@ -261,7 +261,7 @@ async function FormContent({ params }: PageProps) {
 
       {/* Subtle organic curl wave trails in upper red region */}
       <div
-        className="absolute top-16 sm:top-18 left-0 right-0 h-[520px] pointer-events-none overflow-hidden opacity-10 z-0"
+        className="absolute top-16 left-0 right-0 h-[520px] pointer-events-none overflow-hidden opacity-10 z-0"
         aria-hidden="true"
       >
         <svg
@@ -327,7 +327,7 @@ async function FormContent({ params }: PageProps) {
 
       {/* SHARING VISION™ Light Footer */}
       <footer className="border-t border-[#E2E8F0] bg-white/80 backdrop-blur-sm py-8 relative z-10 text-xs text-[#64748B]">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2.5">
             <Image
               src="/Logo-Sharingvision-Main.png"

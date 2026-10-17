@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useSyncExternalStore } from 'react';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import {
   Menu,
@@ -15,10 +15,14 @@ import {
   Loader2,
   Sparkles,
   SearchX,
+  UserCircle,
+  LogOut,
 } from 'lucide-react';
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth } from '@/lib/firebase';
 import type { FormRecord } from '@/types/form';
-import { LogoutConfirmModal } from '@/components/LogoutConfirmModal';
 import { ThemeToggle } from '@/components/ThemeToggle';
+import { LogoutModal } from '@/components/ui/LogoutModal';
 
 interface AdminHeaderProps {
   forms: FormRecord[];
@@ -30,6 +34,8 @@ interface ToastState {
   type: 'success' | 'error';
   message: string;
 }
+
+const emptySubscribe = () => () => {};
 
 export function AdminHeader({ forms, onOpenMobileSidebar }: AdminHeaderProps) {
   const router = useRouter();
@@ -43,6 +49,51 @@ export function AdminHeader({ forms, onOpenMobileSidebar }: AdminHeaderProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const comboboxRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
+
+  // Profile avatar dropdown state
+  const mounted = useSyncExternalStore(
+    emptySubscribe,
+    () => true,
+    () => false
+  );
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const profileRef = useRef<HTMLDivElement>(null);
+  const [currentUser, setCurrentUser] = useState<{ email?: string; name?: string } | null>(() => {
+    if (typeof document !== 'undefined') {
+      try {
+        const match = document.cookie.match(/(?:^|; )pb_user=([^;]*)/);
+        if (match) {
+          const parsed = JSON.parse(decodeURIComponent(match[1]));
+          if (parsed?.email || parsed?.name) {
+            return {
+              email: parsed.email || undefined,
+              name: parsed.name || undefined,
+            };
+          }
+        }
+      } catch {
+        // Ignore parsing error
+      }
+    }
+    return null;
+  });
+
+  // Subscribe to Firebase Auth state updates
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      if (firebaseUser) {
+        setCurrentUser({
+          email: firebaseUser.email || undefined,
+          name: firebaseUser.displayName || undefined,
+        });
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  // Logout modal state
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   // Status toggle state
   const [statusOverrides, setStatusOverrides] = useState<Record<string, boolean>>({});
@@ -97,13 +148,35 @@ export function AdminHeader({ forms, onOpenMobileSidebar }: AdminHeaderProps) {
   // Handle escape key
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
-      if (event.key === 'Escape' && isOpen) {
-        setIsOpen(false);
+      if (event.key === 'Escape') {
+        if (isOpen) setIsOpen(false);
+        if (isProfileOpen) setIsProfileOpen(false);
       }
     }
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen]);
+  }, [isOpen, isProfileOpen]);
+
+  // Handle outside click to close profile dropdown
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent | TouchEvent) {
+      if (
+        profileRef.current &&
+        !profileRef.current.contains(event.target as Node)
+      ) {
+        setIsProfileOpen(false);
+      }
+    }
+
+    if (isProfileOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener('touchstart', handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
+    };
+  }, [isProfileOpen]);
 
   // Auto-dismiss toast after 3.5 seconds
   useEffect(() => {
@@ -443,13 +516,69 @@ export function AdminHeader({ forms, onOpenMobileSidebar }: AdminHeaderProps) {
             </div>
           )}
 
-          {/* Right actions: ThemeToggle + LogoutConfirmModal */}
+          {/* Right actions: ThemeToggle + Profile Avatar Dropdown */}
           <div className="flex items-center gap-2 sm:gap-3 shrink-0">
             {/* Minimalist Theme Toggle (Light / Dark / System) */}
             <ThemeToggle />
 
-            {/* Logout Action with Confirmation Modal */}
-            <LogoutConfirmModal />
+            {/* Profile Avatar with Dropdown */}
+            <div className="relative" ref={profileRef}>
+              <button
+                type="button"
+                onClick={() => setIsProfileOpen((prev) => !prev)}
+                className="relative flex items-center justify-center w-8.5 h-8.5 sm:w-9 sm:h-9 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-white/10 dark:hover:bg-white/15 text-[#DF1A3D] dark:text-rose-400 font-bold text-xs sm:text-sm border border-slate-200 dark:border-white/10 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-500 cursor-pointer shrink-0"
+                aria-label="Menu profil administrator"
+                aria-expanded={isProfileOpen}
+                aria-haspopup="true"
+                id="admin-profile-avatar-button"
+              >
+                {/* Avatar Initial or UserCircle Icon */}
+                {!mounted ? (
+                  <UserCircle className="w-5 h-5 text-slate-700 dark:text-slate-200" />
+                ) : currentUser?.name ? (
+                  <span className="select-none font-bold text-xs text-[#DF1A3D] dark:text-rose-400">
+                    {((currentUser?.name?.[0] || currentUser?.email?.[0] || 'A')).toUpperCase()}
+                  </span>
+                ) : (
+                  <UserCircle className="w-5 h-5 text-slate-700 dark:text-slate-200" />
+                )}
+                {/* Active Status Dot */}
+                <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 border-2 border-white dark:border-[#121212] rounded-full" />
+              </button>
+
+              {/* Profile Dropdown Menu */}
+              {isProfileOpen && (
+                <div
+                  id="admin-profile-dropdown"
+                  className="absolute right-0 top-full mt-2 w-48 bg-white dark:bg-[#141414] rounded-md shadow-lg border border-slate-200 dark:border-white/10 p-1.5 z-50 animate-in fade-in zoom-in-95 duration-150"
+                >
+                  {/* Row a: User Name & Email */}
+                  <div className="px-3 py-2 border-b border-slate-100 dark:border-white/10">
+                    <p className="text-xs font-semibold text-slate-900 dark:text-slate-100 truncate">
+                      {currentUser?.name || 'Administrator'}
+                    </p>
+                    <p className="text-[11px] text-slate-500 dark:text-slate-400 truncate mt-0.5">
+                      {currentUser?.email || 'admin@sharingvision.com'}
+                    </p>
+                  </div>
+
+                  {/* Row b: Logout Button */}
+                  <div className="pt-1">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsProfileOpen(false);
+                        setShowLogoutModal(true);
+                      }}
+                      className="w-full flex items-center gap-2 px-3 py-1.5 text-xs font-semibold text-red-600 hover:bg-rose-50 dark:hover:bg-rose-950/30 rounded transition-colors cursor-pointer text-left"
+                    >
+                      <LogOut className="w-3.5 h-3.5 text-red-600" />
+                      <span className="text-red-600">Keluar</span>
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </header>
@@ -492,6 +621,12 @@ export function AdminHeader({ forms, onOpenMobileSidebar }: AdminHeaderProps) {
           </div>
         </div>
       )}
+
+      {/* Unified Logout Confirmation Modal */}
+      <LogoutModal
+        isOpen={showLogoutModal}
+        onClose={() => setShowLogoutModal(false)}
+      />
     </>
   );
 }

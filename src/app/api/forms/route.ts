@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { ZodError } from 'zod';
 import { formatFirebaseError } from '@/lib/firebase';
 import { formsService } from '@/services/forms.service';
+import { logActivity } from '@/services/audit.service';
 
 export async function GET(request: NextRequest) {
   try {
@@ -59,6 +60,12 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const created = await formsService.createForm(body);
+
+    // Non-blocking background audit log
+    void logActivity({
+      action: 'CREATE_FORM',
+      details: `Created new form: ${created.title}`,
+    }).catch((err) => console.error('Audit log failed:', err));
 
     return NextResponse.json(
       {

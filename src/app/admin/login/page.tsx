@@ -58,17 +58,19 @@ export default function AdminLoginPage() {
   return (
     <div className="bg-slate-50 min-h-screen flex flex-col text-slate-900 selection:bg-red-600 selection:text-white antialiased">
       {/* Unified Top Navbar */}
-      <header className="w-full bg-white border-b border-slate-200 py-4 px-6 md:px-12 flex items-center justify-between">
-        <Link href="/" className="flex items-center group focus:outline-none">
-          <Image
-            src="/Logo-Sharingvision-Main.png"
-            alt="Sharing Vision Logo"
-            width={160}
-            height={32}
-            className="h-8 w-auto object-contain transition-opacity group-hover:opacity-85"
-            priority
-          />
-        </Link>
+      <header className="w-full bg-white border-b border-slate-200 shadow-xs">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+          <Link href="/" className="flex items-center group focus:outline-none">
+            <Image
+              src="/Logo-Sharingvision-Main.png"
+              alt="Sharing Vision Logo"
+              width={160}
+              height={32}
+              className="h-8 w-auto object-contain transition-opacity group-hover:opacity-85"
+              priority
+            />
+          </Link>
+        </div>
       </header>
 
       {/* Main Content Area */}
@@ -77,7 +79,7 @@ export default function AdminLoginPage() {
           {/* Card Header */}
           <div className="mb-6">
             <h1 className="text-2xl font-extrabold text-slate-900 mb-2">
-              Login Portal Admin
+              Login Admin
             </h1>
             <p className="text-sm text-slate-600">
               Masuk dengan kredensial administrator terdaftar

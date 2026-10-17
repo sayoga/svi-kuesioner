@@ -23,7 +23,7 @@ src/
 ```
 
 ## Database Schema (Firestore)
-Skema dipertahankan 1:1 dari struktur legacy PocketBase.
+Skema data Firestore terstruktur dan teroptimasi untuk kuesioner digital.
 - `surveys`: Menyimpan *metadata* kuesioner (status aktif/tidak).
 - `questions`: Relasional ke `survey_id` (tipe pertanyaan, opsi jawaban).
 - `responses`: Menampung *submit* jawaban publik, dilindungi *security rules*.

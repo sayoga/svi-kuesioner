@@ -1,4 +1,4 @@
-# 🚀 Portal Survei & Analitik SHARING VISION™
+# 🚀 Portal Kuesioner & Analitik SHARING VISION™
 
 Platform manajemen kuesioner dan pengumpulan data terintegrasi berstandar *enterprise*. Dibangun untuk mempercepat proses riset pasar, evaluasi internal, dan pengumpulan umpan balik tanpa bergantung pada platform pihak ketiga.
 
@@ -51,7 +51,7 @@ Untuk panduan pengembangan lebih lanjut, silakan baca dokumen berikut:
 *Ditujukan untuk Administrator (Tim HR, Riset, Manajemen) yang menggunakan portal secara harian.*
 
 ### 1. Cara Mengakses Portal Admin
-1. Buka tautan utama portal survei.
+1. Buka tautan utama portal kuesioner.
 2. Klik tombol **"Masuk Admin"** di pojok kanan atas.
 3. Masukkan **Email Admin** dan **Password** yang telah diberikan oleh tim IT.
 4. Jika berhasil, Anda akan langsung dialihkan ke **Dashboard Analitik**.

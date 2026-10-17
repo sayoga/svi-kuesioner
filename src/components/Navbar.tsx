@@ -13,7 +13,7 @@ export function Navbar({ activeFormId, isAdmin = false }: NavbarProps) {
 
   return (
     <header className="sticky top-0 z-50 backdrop-blur-md bg-white/80 border-b border-slate-200/80 shadow-xs">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         {/* Brand Logo */}
         <Link
           href="/"
@@ -22,9 +22,9 @@ export function Navbar({ activeFormId, isAdmin = false }: NavbarProps) {
           <Image
             src="/Logo-Sharingvision-Main.png"
             alt="Sharing Vision Logo"
-            width={150}
-            height={30}
-            className="h-7.5 w-auto object-contain transition-opacity group-hover:opacity-85"
+            width={160}
+            height={32}
+            className="h-8 w-auto object-contain transition-opacity group-hover:opacity-85"
             priority
           />
           <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-semibold bg-rose-50 text-rose-700 border border-rose-200/60">
