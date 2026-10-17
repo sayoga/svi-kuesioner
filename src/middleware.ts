@@ -1,6 +1,10 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
+// IMPORTANT: Never import 'firebase-admin' or Node.js-only SDKs into this middleware.
+// Middleware runs on the Next.js Edge Runtime where Node.js built-ins and CJS modules like 'jose' / 'jwks-rsa' will crash.
+// Token verification or database operations must be handled strictly inside Server Actions or Node.js API Routes.
+
 // Configuration: Paths that are explicitly public or auth routes
 const LOGIN_PATH = '/admin/login';
 const DASHBOARD_PATH = '/admin/dashboard';

@@ -10,26 +10,24 @@ export const metadata: Metadata = {
   description: 'Kelola akun administrator kuesioner dan hak akses Firebase Authentication',
 };
 
-async function UsersPageContent() {
+async function UserTableContent() {
   await connection();
   const result = await listUsersAction();
 
   return (
-    <Suspense fallback={<UsersTableSkeleton />}>
-      <UserManagementView
-        initialUsers={result.data || []}
-        initialError={result.success ? null : result.error}
-      />
-    </Suspense>
+    <UserManagementView
+      initialUsers={result.data || []}
+      initialError={result.success ? null : result.error}
+    />
   );
 }
 
 export default function AdminUsersPage() {
   return (
-    <div className="p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto">
+    <main className="p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto">
       <Suspense fallback={<UsersTableSkeleton />}>
-        <UsersPageContent />
+        <UserTableContent />
       </Suspense>
-    </div>
+    </main>
   );
 }

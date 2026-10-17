@@ -10,23 +10,19 @@ export const metadata: Metadata = {
   description: 'Catatan log aktivitas krusial administrator dan keamanan sistem kuesioner',
 };
 
-async function AuditLogsContent() {
+async function AuditTrailContent() {
   await connection();
   const logs = await getAuditLogs(50);
 
-  return (
-    <Suspense fallback={<AuditLogsSkeleton />}>
-      <AuditLogsView initialLogs={logs} />
-    </Suspense>
-  );
+  return <AuditLogsView initialLogs={logs} />;
 }
 
 export default function AuditLogsPage() {
   return (
-    <div className="p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto">
+    <main className="p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto">
       <Suspense fallback={<AuditLogsSkeleton />}>
-        <AuditLogsContent />
+        <AuditTrailContent />
       </Suspense>
-    </div>
+    </main>
   );
 }
