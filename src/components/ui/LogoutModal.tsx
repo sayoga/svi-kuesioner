@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useSyncExternalStore } from 'react';
 import { createPortal } from 'react-dom';
-import { useRouter } from 'next/navigation';
 import { LogOut, AlertTriangle, Loader2, X } from 'lucide-react';
 import { signOut } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
@@ -19,7 +18,6 @@ export interface LogoutModalProps {
  * and synchronized Firebase + Next.js cookie session revocation.
  */
 export function LogoutModal({ isOpen, onClose }: LogoutModalProps) {
-  const router = useRouter();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const mounted = useSyncExternalStore(
     () => () => {},
@@ -53,7 +51,7 @@ export function LogoutModal({ isOpen, onClose }: LogoutModalProps) {
   const handleConfirmLogout = async () => {
     setIsLoggingOut(true);
     try {
-      // 1. Clear Firebase client-side auth
+      // 1. Pastikan proses sign out client di-await sampai tuntas
       try {
         await signOut(auth);
       } catch (err) {
@@ -62,13 +60,13 @@ export function LogoutModal({ isOpen, onClose }: LogoutModalProps) {
 
       // 2. Call server action to clear cookies
       await logoutAdminAction();
-    } catch {
-      // Fallback redirect if server action didn't trigger navigation
-      router.push('/admin/login');
-      router.refresh();
-    } finally {
-      setIsLoggingOut(false);
-      onClose();
+
+      // 3. HARD REDIRECT: Memaksa browser membuang seluruh cache Next.js Client-side Router
+      window.location.href = '/admin/login';
+    } catch (error) {
+      console.error('Logout error:', error);
+      // Hard redirect fallback jika terjadi error
+      window.location.href = '/admin/login';
     }
   };
 

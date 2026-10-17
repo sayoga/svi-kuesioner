@@ -2,57 +2,96 @@ import { getApps, initializeApp, cert, deleteApp, App } from 'firebase-admin/app
 import { getAuth, Auth } from 'firebase-admin/auth';
 import { getFirestore, Firestore } from 'firebase-admin/firestore';
 
-function formatPrivateKey(key: string | undefined): string | undefined {
-  if (!key) return undefined;
-  let formatted = key.trim();
+/**
+ * Bulletproof parser for Firebase Admin Credentials
+ * Cleans wrapping quotes (single/double/escaped) added by Vercel or .env files,
+ * and converts escaped '\n' literals into actual newlines.
+ */
+function parseCredentials() {
+  // Ambil raw value private key
+  const rawPrivateKey = process.env.FIREBASE_PRIVATE_KEY || '';
 
-  // Strip wrapping double or single quotes if present from .env parsing
-  if (
-    (formatted.startsWith('"') && formatted.endsWith('"')) ||
-    (formatted.startsWith("'") && formatted.endsWith("'"))
-  ) {
-    formatted = formatted.slice(1, -1);
-  }
+  // 1. Buang tanda kutip ganda atau tunggal di awal dan akhir jika Vercel menyisipkannya
+  let formatPrivateKey = rawPrivateKey
+    .trim()
+    .replace(/^["']|["']$/g, '')
+    .replace(/^\\"|\\"$/g, '');
 
-  // Parse escaped \n characters into real newlines
-  formatted = formatted.replace(/\\n/g, '\n');
+  // 2. Ubah literal '\n' (teks) menjadi karakter newline yang sebenarnya (enter)
+  formatPrivateKey = formatPrivateKey.replace(/\\n/g, '\n');
 
-  return formatted;
+  // Ambil client email
+  const rawClientEmail =
+    process.env.FIREBASE_CLIENT_EMAIL ||
+    process.env.FFIREBASE_CLIENT_EMAIL ||
+    '';
+  const clientEmail = rawClientEmail
+    .trim()
+    .replace(/^["']|["']$/g, '')
+    .replace(/^\\"|\\"$/g, '');
+
+  // Ambil project ID
+  const rawProjectId =
+    process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID ||
+    process.env.FIREBASE_PROJECT_ID ||
+    'sharing-vision-3fb3a';
+  const projectId = rawProjectId
+    .trim()
+    .replace(/^["']|["']$/g, '')
+    .replace(/^\\"|\\"$/g, '');
+
+  const serviceAccountJson = process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
+
+  return {
+    projectId,
+    clientEmail,
+    formatPrivateKey,
+    serviceAccountJson,
+  };
 }
 
 export function getAdminApp(): App {
-  const projectId =
-    process.env.FIREBASE_PROJECT_ID ||
-    process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID ||
-    'sharing-vision-3fb3a';
-
-  const clientEmail =
-    process.env.FIREBASE_CLIENT_EMAIL ||
-    process.env.FFIREBASE_CLIENT_EMAIL;
-  const rawPrivateKey = process.env.FIREBASE_PRIVATE_KEY;
-  const serviceAccountJson = process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
-
-  const privateKey = formatPrivateKey(rawPrivateKey);
+  const { projectId, clientEmail, formatPrivateKey, serviceAccountJson } = parseCredentials();
 
   const apps = getApps();
   if (apps.length > 0) {
     const existingApp = apps[0];
     const hasCert = Boolean(existingApp.options.credential);
 
-    // If the existing app already has credentials, or we still don't have credentials to upgrade, return it
-    if (hasCert || (!clientEmail && !serviceAccountJson)) {
+    // If existing app already has credentials, return it
+    if (hasCert) {
       return existingApp;
     }
 
-    // Otherwise, previous app was an uncredentialed fallback, delete it and upgrade with credentials
-    try {
-      deleteApp(existingApp);
-    } catch {
-      // ignore
+    // If existing app was an uncredentialed placeholder and we now have credentials, replace it
+    if (clientEmail && formatPrivateKey) {
+      try {
+        deleteApp(existingApp);
+      } catch {
+        // ignore
+      }
+    } else {
+      return existingApp;
     }
   }
 
-  // 1. Service account JSON string
+  // 1. Primary: Use parsed clientEmail and privateKey from environment
+  if (clientEmail && formatPrivateKey) {
+    try {
+      return initializeApp({
+        credential: cert({
+          projectId,
+          clientEmail,
+          privateKey: formatPrivateKey,
+        }),
+        projectId,
+      });
+    } catch (certErr) {
+      console.error('Failed to initialize Firebase Admin with credentials:', certErr);
+    }
+  }
+
+  // 2. Secondary: Parse full service account JSON if provided
   if (serviceAccountJson) {
     try {
       const parsed = JSON.parse(serviceAccountJson);
@@ -65,21 +104,9 @@ export function getAdminApp(): App {
     }
   }
 
-  // 2. Individual clientEmail and privateKey from environment
-  if (clientEmail && privateKey) {
-    return initializeApp({
-      credential: cert({
-        projectId,
-        clientEmail,
-        privateKey,
-      }),
-      projectId,
-    });
-  }
-
-  // Fallback when credentials are not yet configured or in mock/dev mode
+  // 3. Fallback when credentials are not yet configured or in mock/dev mode
   console.warn(
-    '⚠️ [Firebase Admin] Kredensial Firebase Admin SDK belum lengkap. Pastikan FIREBASE_CLIENT_EMAIL dan FIREBASE_PRIVATE_KEY telah diset di .env.local.'
+    '⚠️ [Firebase Admin] Kredensial Firebase Admin SDK belum lengkap. Pastikan FIREBASE_CLIENT_EMAIL dan FIREBASE_PRIVATE_KEY telah diset di environment variables.'
   );
 
   return initializeApp({
@@ -87,7 +114,7 @@ export function getAdminApp(): App {
   });
 }
 
-// Proxies for adminAuth and adminDb so that initialization occurs at runtime when environment is fully loaded
+// Proxies for adminAuth and adminDb so that initialization occurs lazily at runtime when environment is fully loaded
 export const adminAuth: Auth = new Proxy({} as Auth, {
   get(_target, prop) {
     const authInstance = getAuth(getAdminApp());

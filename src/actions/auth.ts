@@ -146,7 +146,7 @@ export async function loginAdminAction(formData: FormData): Promise<AuthActionRe
 /**
  * Server action to sign out the admin and clear auth cookies.
  */
-export async function logoutAdminAction(): Promise<void> {
+export async function logoutAdminAction(): Promise<{ success: boolean }> {
   try {
     await signOut(auth);
   } catch {
@@ -156,5 +156,5 @@ export async function logoutAdminAction(): Promise<void> {
   const cookieStore = await cookies();
   cookieStore.delete('pb_auth');
   cookieStore.delete('pb_user');
-  redirect('/admin/login');
+  return { success: true };
 }
