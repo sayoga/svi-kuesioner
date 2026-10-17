@@ -14,15 +14,19 @@ async function AuditLogsContent() {
   await connection();
   const logs = await getAuditLogs(50);
 
-  return <AuditLogsView initialLogs={logs} />;
+  return (
+    <Suspense fallback={<AuditLogsSkeleton />}>
+      <AuditLogsView initialLogs={logs} />
+    </Suspense>
+  );
 }
 
 export default function AuditLogsPage() {
   return (
-    <main className="p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto">
+    <div className="p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto">
       <Suspense fallback={<AuditLogsSkeleton />}>
         <AuditLogsContent />
       </Suspense>
-    </main>
+    </div>
   );
 }

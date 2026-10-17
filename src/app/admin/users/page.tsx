@@ -15,19 +15,21 @@ async function UsersPageContent() {
   const result = await listUsersAction();
 
   return (
-    <UserManagementView
-      initialUsers={result.data || []}
-      initialError={result.success ? null : result.error}
-    />
+    <Suspense fallback={<UsersTableSkeleton />}>
+      <UserManagementView
+        initialUsers={result.data || []}
+        initialError={result.success ? null : result.error}
+      />
+    </Suspense>
   );
 }
 
 export default function AdminUsersPage() {
   return (
-    <main className="p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto">
+    <div className="p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto">
       <Suspense fallback={<UsersTableSkeleton />}>
         <UsersPageContent />
       </Suspense>
-    </main>
+    </div>
   );
 }
