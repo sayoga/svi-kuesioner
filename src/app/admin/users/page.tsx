@@ -1,33 +1,16 @@
-import { Suspense } from 'react';
-import { connection } from 'next/server';
-import type { Metadata } from 'next';
-import { listUsersAction } from '@/actions/users';
-import { UserManagementView } from '@/components/UserManagementView';
-import { UsersTableSkeleton } from './loading';
+'use client';
 
-export const metadata: Metadata = {
-  title: 'Manajemen Pengguna & Admin | SHARING VISION™',
-  description: 'Kelola akun administrator kuesioner dan hak akses Firebase Authentication',
-};
+import dynamic from 'next/dynamic';
 
-async function UserTableContent() {
-  await connection();
-  const result = await listUsersAction();
+const UsersClient = dynamic(() => import('./UsersClient'), {
+  ssr: false,
+  loading: () => (
+    <div className="p-8 text-center text-slate-500 dark:text-slate-400 font-medium">
+      Memuat portal admin...
+    </div>
+  ),
+});
 
-  return (
-    <UserManagementView
-      initialUsers={result.data || []}
-      initialError={result.success ? null : result.error}
-    />
-  );
-}
-
-export default function AdminUsersPage() {
-  return (
-    <main className="p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto">
-      <Suspense fallback={<UsersTableSkeleton />}>
-        <UserTableContent />
-      </Suspense>
-    </main>
-  );
+export default function Page() {
+  return <UsersClient />;
 }

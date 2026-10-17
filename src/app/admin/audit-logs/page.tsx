@@ -1,28 +1,16 @@
-import { Suspense } from 'react';
-import { connection } from 'next/server';
-import type { Metadata } from 'next';
-import { getAuditLogs } from '@/services/audit.service';
-import { AuditLogsView } from '@/components/AuditLogsView';
-import { AuditLogsSkeleton } from './loading';
+'use client';
 
-export const metadata: Metadata = {
-  title: 'Audit Trail & Log Aktivitas | SHARING VISION™',
-  description: 'Catatan log aktivitas krusial administrator dan keamanan sistem kuesioner',
-};
+import dynamic from 'next/dynamic';
 
-async function AuditTrailContent() {
-  await connection();
-  const logs = await getAuditLogs(50);
+const AuditClient = dynamic(() => import('./AuditClient'), {
+  ssr: false,
+  loading: () => (
+    <div className="p-8 text-center text-slate-500 dark:text-slate-400 font-medium">
+      Memuat log aktivitas...
+    </div>
+  ),
+});
 
-  return <AuditLogsView initialLogs={logs} />;
-}
-
-export default function AuditLogsPage() {
-  return (
-    <main className="p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto">
-      <Suspense fallback={<AuditLogsSkeleton />}>
-        <AuditTrailContent />
-      </Suspense>
-    </main>
-  );
+export default function Page() {
+  return <AuditClient />;
 }
