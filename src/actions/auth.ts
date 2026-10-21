@@ -46,36 +46,67 @@ export async function loginAdminAction(formData: FormData): Promise<AuthActionRe
         name: user.displayName || 'Admin',
       };
     } catch {
-      // 2. Fallback: Check Firestore 'admins' or 'users' collection
+      // 2. Fallback: Check Firestore 'admins' or 'users' collection using adminDb
       try {
-        const adminsRef = collection(db, 'admins');
-        const qAdmins = query(adminsRef, where('email', '==', email));
-        const adminSnap = await getDocs(qAdmins);
+        const { adminDb } = await import('@/lib/firebase-admin');
+        if (adminDb) {
+          const adminSnap = await adminDb.collection('admins').where('email', '==', email).get();
 
-        if (!adminSnap.empty) {
-          const docData = adminSnap.docs[0].data();
-          if (docData.password === password) {
-            token = `firebase-custom-token-${adminSnap.docs[0].id}-${Date.now()}`;
-            authUser = {
-              id: adminSnap.docs[0].id,
-              email: docData.email || email,
-              name: docData.name || docData.nama || 'Admin',
-            };
-          }
-        } else {
-          const usersRef = collection(db, 'users');
-          const qUsers = query(usersRef, where('email', '==', email));
-          const userSnap = await getDocs(qUsers);
-
-          if (!userSnap.empty) {
-            const docData = userSnap.docs[0].data();
+          if (!adminSnap.empty) {
+            const docData = adminSnap.docs[0].data();
             if (docData.password === password) {
-              token = `firebase-custom-token-${userSnap.docs[0].id}-${Date.now()}`;
+              token = `firebase-custom-token-${adminSnap.docs[0].id}-${Date.now()}`;
               authUser = {
-                id: userSnap.docs[0].id,
+                id: adminSnap.docs[0].id,
                 email: docData.email || email,
                 name: docData.name || docData.nama || 'Admin',
               };
+            }
+          } else {
+            const userSnap = await adminDb.collection('users').where('email', '==', email).get();
+
+            if (!userSnap.empty) {
+              const docData = userSnap.docs[0].data();
+              if (docData.password === password) {
+                token = `firebase-custom-token-${userSnap.docs[0].id}-${Date.now()}`;
+                authUser = {
+                  id: userSnap.docs[0].id,
+                  email: docData.email || email,
+                  name: docData.name || docData.nama || 'Admin',
+                };
+              }
+            }
+          }
+        } else if (db) {
+          const adminsRef = collection(db, 'admins');
+          const qAdmins = query(adminsRef, where('email', '==', email));
+          const adminSnap = await getDocs(qAdmins);
+
+          if (!adminSnap.empty) {
+            const docData = adminSnap.docs[0].data();
+            if (docData.password === password) {
+              token = `firebase-custom-token-${adminSnap.docs[0].id}-${Date.now()}`;
+              authUser = {
+                id: adminSnap.docs[0].id,
+                email: docData.email || email,
+                name: docData.name || docData.nama || 'Admin',
+              };
+            }
+          } else {
+            const usersRef = collection(db, 'users');
+            const qUsers = query(usersRef, where('email', '==', email));
+            const userSnap = await getDocs(qUsers);
+
+            if (!userSnap.empty) {
+              const docData = userSnap.docs[0].data();
+              if (docData.password === password) {
+                token = `firebase-custom-token-${userSnap.docs[0].id}-${Date.now()}`;
+                authUser = {
+                  id: userSnap.docs[0].id,
+                  email: docData.email || email,
+                  name: docData.name || docData.nama || 'Admin',
+                };
+              }
             }
           }
         }

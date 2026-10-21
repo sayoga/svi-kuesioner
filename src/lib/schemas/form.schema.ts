@@ -42,33 +42,34 @@ export const questionSchema = z
     }
   });
 
-export const createFormSchema = z.object({
-  title: z
-    .string()
-    .trim()
-    .min(1, { message: 'Form title is required' })
-    .max(255, { message: 'Title must not exceed 255 characters' }),
-  description: z.string().trim().optional().default(''),
-  is_active: z.boolean().optional().default(true),
-  questions: z
-    .array(questionSchema)
-    .min(1, { message: 'At least one question is required' })
-    .superRefine((questions, ctx) => {
-      const ids = new Set<string>();
-      questions.forEach((q, index) => {
-        if (ids.has(q.q_id)) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: `Duplicate question ID detected: '${q.q_id}' at index ${index}`,
-            path: [index, 'q_id'],
-          });
-        }
-        ids.add(q.q_id);
-      });
-    }),
-});
+export const baseFormSchema = z
+  .object({
+    title: z
+      .string()
+      .trim()
+      .min(1, { message: 'Form title is required' })
+      .max(255, { message: 'Title must not exceed 255 characters' }),
+    description: z.string().trim().optional().default(''),
+    is_active: z.boolean().optional().default(true),
+    version: z.string().optional(),
+    modules: z.array(z.any()).optional(),
+    questions: z.array(z.any()).optional().default([]),
+  })
+  .passthrough();
 
-export const updateFormSchema = createFormSchema.partial();
+export const updateFormSchema = baseFormSchema.partial();
+
+export const createFormSchema = baseFormSchema.superRefine((data, ctx) => {
+  const hasQuestions = Array.isArray(data.questions) && data.questions.length > 0;
+  const hasModules = Array.isArray(data.modules) && data.modules.length > 0;
+  if (!hasQuestions && !hasModules) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: 'Kuesioner minimal harus memiliki 1 modul atau 1 pertanyaan.',
+      path: ['questions'],
+    });
+  }
+});
 
 export type CreateFormSchemaInput = z.infer<typeof createFormSchema>;
 export type UpdateFormSchemaInput = z.infer<typeof updateFormSchema>;

@@ -1,4 +1,5 @@
 import { Suspense } from 'react';
+import { connection } from 'next/server';
 import { formsService } from '@/services/forms.service';
 import { QuestionnaireBuilderView } from '@/components/QuestionnaireBuilderView';
 import { FormBuilderSkeleton } from './loading';
@@ -15,6 +16,7 @@ interface PageProps {
 }
 
 async function KuesionerPageContent({ searchParams }: PageProps) {
+  await connection();
   const { formId } = await searchParams;
 
   let existingForm: FormRecord | null = null;
@@ -26,7 +28,16 @@ async function KuesionerPageContent({ searchParams }: PageProps) {
     }
   }
 
-  return <QuestionnaireBuilderView existingForm={existingForm} />;
+  const selectedSurveyId = formId || 'new';
+
+  return (
+    <QuestionnaireBuilderView
+      key={selectedSurveyId}
+      surveyId={formId}
+      initialData={existingForm}
+      existingForm={existingForm}
+    />
+  );
 }
 
 export default function KuesionerPage({ searchParams }: PageProps) {

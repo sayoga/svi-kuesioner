@@ -7,6 +7,7 @@ import {
 } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { submitResponseSchema } from '@/lib/schemas/response.schema';
+
 import { formsService } from '@/services/forms.service';
 import type {
   AnswerValue,
@@ -62,53 +63,134 @@ export class ResponsesService {
       updated: nowIso,
     };
 
-    const docRef = await addDoc(
-      collection(db, RESPONSES_COLLECTION),
-      docPayload
-    );
+    // Server-side save via Firebase Admin SDK
+    if (typeof window === 'undefined') {
+      try {
+        const { adminDb } = await import('@/lib/firebase-admin');
+        const ref = await adminDb.collection(RESPONSES_COLLECTION).add(docPayload);
+        return {
+          id: ref.id,
+          collectionId: RESPONSES_COLLECTION,
+          collectionName: RESPONSES_COLLECTION,
+          ...docPayload,
+        } as ResponseRecord;
+      } catch (adminErr) {
+        console.warn('[ResponsesService] Admin submitResponse failed, fallback to client SDK:', adminErr);
+      }
+    }
 
-    return {
-      id: docRef.id,
-      collectionId: RESPONSES_COLLECTION,
-      collectionName: RESPONSES_COLLECTION,
-      ...docPayload,
-    } as ResponseRecord;
+    if (db) {
+      const docRef = await addDoc(
+        collection(db, RESPONSES_COLLECTION),
+        docPayload
+      );
+
+      return {
+        id: docRef.id,
+        collectionId: RESPONSES_COLLECTION,
+        collectionName: RESPONSES_COLLECTION,
+        ...docPayload,
+      } as ResponseRecord;
+    }
+
+    throw new Error('Database connection is not available');
   }
 
   /**
    * Fetches all responses for a form (paginated)
    */
   async getResponsesByForm(formId: string, page = 1, perPage = 100) {
-    const responsesRef = collection(db, RESPONSES_COLLECTION);
-    const q = query(responsesRef, where('form_id', '==', formId));
+    let items: ResponseRecord[] = [];
 
-    let querySnapshot = await getDocs(q);
+    // Server-side fetch via Firebase Admin SDK
+    if (typeof window === 'undefined') {
+      try {
+        const { adminDb } = await import('@/lib/firebase-admin');
+        const snap = await adminDb
+          .collection(RESPONSES_COLLECTION)
+          .where('form_id', '==', formId)
+          .get();
+        let docs = snap.docs;
+        if (docs.length === 0) {
+          const fallbackSnap = await adminDb
+            .collection(RESPONSES_COLLECTION)
+            .where('relation', '==', formId)
+            .get();
+          docs = fallbackSnap.docs;
+        }
+        if (docs.length === 0) {
+          const fallbackSurveyIdSnap = await adminDb
+            .collection(RESPONSES_COLLECTION)
+            .where('surveyId', '==', formId)
+            .get();
+          docs = fallbackSurveyIdSnap.docs;
+        }
 
-    // Fallback if responses were stored with 'relation'
-    if (querySnapshot.empty) {
-      const fallbackQ = query(responsesRef, where('relation', '==', formId));
-      querySnapshot = await getDocs(fallbackQ);
+        items = docs.map((docSnap) => {
+          const data = docSnap.data();
+          const createdTime =
+            data.created ||
+            (data.answers?._submitted_at as string) ||
+            '';
+
+          return {
+            id: docSnap.id,
+            collectionId: RESPONSES_COLLECTION,
+            collectionName: RESPONSES_COLLECTION,
+            created: createdTime,
+            updated: data.updated || '',
+            form_id: data.form_id || data.relation || formId,
+            respondent_name: data.respondent_name || data.respondentName || 'Anonymous',
+            answers: data.answers || {},
+            ...data,
+          } as ResponseRecord;
+        });
+      } catch (adminErr) {
+        console.warn('[ResponsesService] Admin getResponsesByForm failed, fallback to client SDK:', adminErr);
+      }
     }
 
-    const items: ResponseRecord[] = querySnapshot.docs.map((docSnap) => {
-      const data = docSnap.data();
-      const createdTime =
-        data.created ||
-        (data.answers?._submitted_at as string) ||
-        '';
+    // Client-side fetch or fallback
+    if (items.length === 0 && db) {
+      try {
+        const responsesRef = collection(db, RESPONSES_COLLECTION);
+        const q = query(responsesRef, where('form_id', '==', formId));
 
-      return {
-        id: docSnap.id,
-        collectionId: RESPONSES_COLLECTION,
-        collectionName: RESPONSES_COLLECTION,
-        created: createdTime,
-        updated: data.updated || '',
-        form_id: data.form_id || data.relation || formId,
-        respondent_name: data.respondent_name || 'Anonymous',
-        answers: data.answers || {},
-        ...data,
-      } as ResponseRecord;
-    });
+        let querySnapshot = await getDocs(q);
+
+        // Fallback if responses were stored with 'relation'
+        if (querySnapshot.empty) {
+          const fallbackQ = query(responsesRef, where('relation', '==', formId));
+          querySnapshot = await getDocs(fallbackQ);
+        }
+        if (querySnapshot.empty) {
+          const fallbackQ2 = query(responsesRef, where('surveyId', '==', formId));
+          querySnapshot = await getDocs(fallbackQ2);
+        }
+
+        items = querySnapshot.docs.map((docSnap) => {
+          const data = docSnap.data();
+          const createdTime =
+            data.created ||
+            (data.answers?._submitted_at as string) ||
+            '';
+
+          return {
+            id: docSnap.id,
+            collectionId: RESPONSES_COLLECTION,
+            collectionName: RESPONSES_COLLECTION,
+            created: createdTime,
+            updated: data.updated || '',
+            form_id: data.form_id || data.relation || formId,
+            respondent_name: data.respondent_name || data.respondentName || 'Anonymous',
+            answers: data.answers || {},
+            ...data,
+          } as ResponseRecord;
+        });
+      } catch (clientErr) {
+        console.warn('[ResponsesService] Client getDocs failed:', clientErr);
+      }
+    }
 
     // Sort newest first
     items.sort((a, b) => (b.created || b.id).localeCompare(a.created || a.id));
@@ -137,34 +219,95 @@ export class ResponsesService {
     }
 
     // 2. Fetch all responses for this form
-    const responsesRef = collection(db, RESPONSES_COLLECTION);
-    const q = query(responsesRef, where('form_id', '==', formId));
+    let responses: ResponseRecord[] = [];
 
-    let querySnapshot = await getDocs(q);
-    if (querySnapshot.empty) {
-      const fallbackQ = query(responsesRef, where('relation', '==', formId));
-      querySnapshot = await getDocs(fallbackQ);
+    // Server-side fetch via Firebase Admin SDK
+    if (typeof window === 'undefined') {
+      try {
+        const { adminDb } = await import('@/lib/firebase-admin');
+        const snap = await adminDb
+          .collection(RESPONSES_COLLECTION)
+          .where('form_id', '==', formId)
+          .get();
+        let docs = snap.docs;
+        if (docs.length === 0) {
+          const fallbackSnap = await adminDb
+            .collection(RESPONSES_COLLECTION)
+            .where('relation', '==', formId)
+            .get();
+          docs = fallbackSnap.docs;
+        }
+        if (docs.length === 0) {
+          const fallbackSurveyIdSnap = await adminDb
+            .collection(RESPONSES_COLLECTION)
+            .where('surveyId', '==', formId)
+            .get();
+          docs = fallbackSurveyIdSnap.docs;
+        }
+
+        responses = docs.map((docSnap) => {
+          const data = docSnap.data();
+          const createdTime =
+            data.created ||
+            (data.answers?._submitted_at as string) ||
+            '';
+
+          return {
+            id: docSnap.id,
+            collectionId: RESPONSES_COLLECTION,
+            collectionName: RESPONSES_COLLECTION,
+            created: createdTime,
+            updated: data.updated || '',
+            form_id: data.form_id || data.relation || formId,
+            respondent_name: data.respondent_name || data.respondentName || 'Anonymous',
+            answers: data.answers || {},
+            ...data,
+          } as ResponseRecord;
+        });
+      } catch (adminErr) {
+        console.warn('[ResponsesService] Admin getFormAnalytics failed, fallback to client SDK:', adminErr);
+      }
     }
 
-    const responses: ResponseRecord[] = querySnapshot.docs.map((docSnap) => {
-      const data = docSnap.data();
-      const createdTime =
-        data.created ||
-        (data.answers?._submitted_at as string) ||
-        '';
+    // Client-side fetch or server fallback via Client SDK
+    if (responses.length === 0 && db) {
+      try {
+        const responsesRef = collection(db, RESPONSES_COLLECTION);
+        const q = query(responsesRef, where('form_id', '==', formId));
 
-      return {
-        id: docSnap.id,
-        collectionId: RESPONSES_COLLECTION,
-        collectionName: RESPONSES_COLLECTION,
-        created: createdTime,
-        updated: data.updated || '',
-        form_id: data.form_id || data.relation || formId,
-        respondent_name: data.respondent_name || 'Anonymous',
-        answers: data.answers || {},
-        ...data,
-      } as ResponseRecord;
-    });
+        let querySnapshot = await getDocs(q);
+        if (querySnapshot.empty) {
+          const fallbackQ = query(responsesRef, where('relation', '==', formId));
+          querySnapshot = await getDocs(fallbackQ);
+        }
+        if (querySnapshot.empty) {
+          const fallbackQ2 = query(responsesRef, where('surveyId', '==', formId));
+          querySnapshot = await getDocs(fallbackQ2);
+        }
+
+        responses = querySnapshot.docs.map((docSnap) => {
+          const data = docSnap.data();
+          const createdTime =
+            data.created ||
+            (data.answers?._submitted_at as string) ||
+            '';
+
+          return {
+            id: docSnap.id,
+            collectionId: RESPONSES_COLLECTION,
+            collectionName: RESPONSES_COLLECTION,
+            created: createdTime,
+            updated: data.updated || '',
+            form_id: data.form_id || data.relation || formId,
+            respondent_name: data.respondent_name || data.respondentName || 'Anonymous',
+            answers: data.answers || {},
+            ...data,
+          } as ResponseRecord;
+        });
+      } catch (clientErr) {
+        console.warn('[ResponsesService] Client getDocs failed:', clientErr);
+      }
+    }
 
     // Sort newest first
     responses.sort((a, b) => (b.created || b.id).localeCompare(a.created || a.id));
@@ -174,25 +317,44 @@ export class ResponsesService {
       totalResponses > 0 ? responses[0].created || null : null;
 
     // 3. Reduce answers into chart-friendly summaries
+    // 3. Reduce answers into chart-friendly summaries
     const summary: Record<string, Record<string, number>> = {};
     const questionAnalyticsList: QuestionAnalytics[] = [];
 
-    for (const qDef of form.questions) {
+    // Ekstrak dari modules jika ada, jika tidak, gunakan array questions lama
+    const allQuestions =
+      form.modules && form.modules.length > 0
+        ? form.modules.flatMap((module) => module.questions || [])
+        : (form.questions || []);
+
+    for (const qDef of allQuestions) {
+      const q_id = (qDef as any).id || (qDef as any).q_id || '';
+      const label = (qDef as any).text || (qDef as any).label || (qDef as any).code || q_id;
       const isChoiceType = ['radio', 'checkbox', 'dropdown'].includes(qDef.type);
 
       if (isChoiceType) {
         // Initialize counts with 0 for all defined options to prevent missing zero-count categories
         const counts: Record<string, number> = {};
+        const valueToLabelMap: Record<string, string> = {};
+
         if (Array.isArray(qDef.options)) {
           for (const opt of qDef.options) {
-            counts[opt] = 0;
+            if (typeof opt === 'string') {
+              valueToLabelMap[opt] = opt;
+              counts[opt] = 0;
+            } else if (opt && typeof opt === 'object') {
+              const optVal = String((opt as any).value);
+              const optLabel = (opt as any).label || optVal;
+              valueToLabelMap[optVal] = optLabel;
+              counts[optLabel] = 0;
+            }
           }
         }
 
         let answeredCount = 0;
 
         for (const resp of responses) {
-          const rawAnswer = resp.answers?.[qDef.q_id];
+          const rawAnswer = resp.answers?.[q_id];
           if (rawAnswer === undefined || rawAnswer === null || rawAnswer === '') {
             continue;
           }
@@ -204,35 +366,37 @@ export class ResponsesService {
             for (const item of rawAnswer) {
               const val = String(item).trim();
               if (val) {
-                counts[val] = (counts[val] || 0) + 1;
+                const optLabel = valueToLabelMap[val] || val;
+                counts[optLabel] = (counts[optLabel] || 0) + 1;
               }
             }
           } else {
             // Radio or dropdown single select response
             const val = String(rawAnswer).trim();
             if (val) {
-              counts[val] = (counts[val] || 0) + 1;
+              const optLabel = valueToLabelMap[val] || val;
+              counts[optLabel] = (counts[optLabel] || 0) + 1;
             }
           }
         }
 
         // Store in summary keyed by q_id
-        summary[qDef.q_id] = counts;
+        summary[q_id] = counts;
 
         questionAnalyticsList.push({
-          q_id: qDef.q_id,
-          label: qDef.label,
-          type: qDef.type,
+          q_id,
+          label,
+          type: qDef.type as any,
           totalAnswered: answeredCount,
           optionsCount: counts,
         });
       } else {
-        // Free-text or textarea questions
+        // Free-text, textarea, or number questions
         const textAnswers: string[] = [];
         let answeredCount = 0;
 
         for (const resp of responses) {
-          const rawAnswer = resp.answers?.[qDef.q_id];
+          const rawAnswer = resp.answers?.[q_id];
           if (rawAnswer !== undefined && rawAnswer !== null) {
             const str = String(rawAnswer).trim();
             if (str.length > 0) {
@@ -243,9 +407,9 @@ export class ResponsesService {
         }
 
         questionAnalyticsList.push({
-          q_id: qDef.q_id,
-          label: qDef.label,
-          type: qDef.type,
+          q_id,
+          label,
+          type: qDef.type as any,
           totalAnswered: answeredCount,
           textAnswers,
         });

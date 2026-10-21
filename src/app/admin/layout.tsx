@@ -13,7 +13,9 @@ async function AdminShellLoader({ children }: { children: React.ReactNode }) {
   try {
     const result = await formsService.getForms({ perPage: 100, sort: '-id' });
     forms = result.items || [];
-  } catch {
+    console.log('[AdminShellLoader] Loaded forms count:', forms.length, forms.map(f => f.id));
+  } catch (err) {
+    console.error('[AdminShellLoader] Error loading forms:', err);
     forms = [];
   }
 

@@ -1,0 +1,301 @@
+{
+  "id": "survey-umkm-bri",
+  "title": "Kuesioner Survei Layanan UMKM BRI",
+  "description": "Value Proposition Enhancement Layanan UMKM",
+  "version": "0.3",
+  "modules": [
+    {
+      "id": "S",
+      "title": "Screening",
+      "description": "Berisikan sepuluh pertanyaan penyaring untuk kriteria responden.",
+      "questions": [
+        {
+          "id": "S1",
+          "code": "S1",
+          "text": "Apakah Bapak/Ibu pemilik usaha ini, atau pengelola yang berwenang memutuskan urusan keuangan usaha?",
+          "type": "radio",
+          "required": true,
+          "options": [
+            { "value": "1", "label": "Pemilik" },
+            { "value": "2", "label": "Pengelola berwenang" },
+            { "value": "3", "label": "Karyawan/anggota keluarga tanpa wewenang", "terminate": true, "terminationReason": "Maaf, responden tidak memenuhi kriteria wewenang." }
+          ]
+        },
+        {
+          "id": "S2",
+          "code": "S2",
+          "text": "Apa jenis usaha utama di lokasi ini?",
+          "type": "radio",
+          "required": true,
+          "options": [
+            { "value": "1", "label": "Perdagangan/Retail (toko, warung, kios, minimarket)" },
+            { "value": "2", "label": "Kuliner/F&B (rumah makan, kafe, kedai, kaki lima)" },
+            { "value": "3", "label": "Jasa", "terminate": true },
+            { "value": "4", "label": "Produksi/manufaktur", "terminate": true },
+            { "value": "99", "label": "Lainnya", "hasFreeText": true, "terminate": true }
+          ]
+        },
+        {
+          "id": "S3",
+          "code": "S3",
+          "text": "Sudah berapa lama usaha ini berjalan di lokasi ini?",
+          "type": "radio",
+          "required": true,
+          "options": [
+            { "value": "1", "label": "Kurang dari 1 tahun", "terminate": true },
+            { "value": "2", "label": "1–3 tahun" },
+            { "value": "3", "label": "Lebih dari 3–5 tahun" },
+            { "value": "4", "label": "Lebih dari 5 tahun" }
+          ]
+        },
+        {
+          "id": "S4",
+          "code": "S4",
+          "text": "Boleh tahu usia Bapak/Ibu saat ini?",
+          "type": "number",
+          "required": true,
+          "placeholder": "Isian angka tahun",
+          "skipRules": [
+            {
+              "conditionLogic": "or",
+              "conditions": [
+                { "operator": "less_than", "value": 21 },
+                { "operator": "greater_than", "value": 55 }
+              ],
+              "action": "terminate",
+              "terminationReason": "Usia di luar kriteria (21-55 tahun)."
+            }
+          ]
+        },
+        {
+          "id": "S5",
+          "code": "S5",
+          "text": "Dari semua rekening bank yang dipakai usaha, rekening bank mana yang menjadi rekening operasional utama, yaitu tempat masuknya hasil penjualan sehari-hari?",
+          "type": "radio",
+          "required": true,
+          "options": [
+            { "value": "1", "label": "BRI" },
+            { "value": "2", "label": "BCA" },
+            { "value": "3", "label": "Mandiri" },
+            { "value": "4", "label": "BNI" },
+            { "value": "5", "label": "BSI" },
+            { "value": "6", "label": "CIMB Niaga" },
+            { "value": "7", "label": "Bank digital (Jago, Seabank, Blu, Neo, Jenius)" },
+            { "value": "8", "label": "BPR/BPD" },
+            { "value": "9", "label": "Tidak punya rekening usaha", "terminate": true },
+            { "value": "99", "label": "Lainnya", "hasFreeText": true }
+          ]
+        },
+        {
+          "id": "S6",
+          "code": "S6",
+          "text": "Dalam sebulan terakhir, berapa kali Bapak/Ibu memakai aplikasi mobile banking untuk transaksi usaha, bukan sekadar cek saldo?",
+          "type": "radio",
+          "required": true,
+          "options": [
+            { "value": "1", "label": "Tidak pernah", "terminate": true },
+            { "value": "2", "label": "1–2 kali", "terminate": true },
+            { "value": "3", "label": "3–5 kali" },
+            { "value": "4", "label": "6–10 kali" },
+            { "value": "5", "label": "Lebih dari 10 kali" }
+          ]
+        },
+        {
+          "id": "S7",
+          "code": "S7",
+          "text": "Apakah usaha ini menerima pembayaran non-tunai dari pembeli?",
+          "type": "checkbox",
+          "required": true,
+          "options": [
+            { "value": "1", "label": "Ya, QRIS" },
+            { "value": "2", "label": "Ya, transfer" },
+            { "value": "3", "label": "Ya, kartu/EDC" },
+            { "value": "4", "label": "Ya, e-wallet tanpa QRIS" },
+            { "value": "5", "label": "Tidak sama sekali" }
+          ],
+          "skipRules": [
+            {
+              "condition": { "operator": "equals", "value": ["5"] },
+              "action": "terminate",
+              "terminationReason": "Usaha wajib menerima pembayaran non-tunai."
+            }
+          ]
+        },
+        {
+          "id": "S8a",
+          "code": "S8a",
+          "text": "Apakah Bapak/Ibu atau anggota keluarga serumah bekerja di bank, perusahaan riset pasar, atau agensi iklan/pemasaran?",
+          "type": "radio",
+          "required": true,
+          "options": [
+            { "value": "1", "label": "Ya", "terminate": true },
+            { "value": "2", "label": "Tidak" }
+          ]
+        },
+        {
+          "id": "S8b",
+          "code": "S8b",
+          "text": "Dalam 6 bulan terakhir, apakah pernah mengikuti survei tentang bank atau pembayaran digital?",
+          "type": "radio",
+          "required": true,
+          "options": [
+            { "value": "1", "label": "Ya", "terminate": true },
+            { "value": "2", "label": "Tidak" },
+            { "value": "97", "label": "Tidak ingat" }
+          ]
+        },
+        {
+          "id": "S9",
+          "code": "S9",
+          "text": "Apakah usaha ini cabang dari jaringan/waralaba nasional yang rekening banknya ditentukan kantor pusat?",
+          "type": "radio",
+          "required": true,
+          "options": [
+            { "value": "1", "label": "Ya", "terminate": true },
+            { "value": "2", "label": "Tidak, usaha mandiri" },
+            { "value": "3", "label": "Waralaba tetapi rekening diatur sendiri" }
+          ]
+        },
+        {
+          "id": "S10a",
+          "code": "S10a",
+          "text": "Konfirmasi Kota",
+          "type": "radio",
+          "required": true,
+          "options": [
+            { "value": "1", "label": "Jakarta" },
+            { "value": "2", "label": "Surabaya" },
+            { "value": "3", "label": "Bandung" },
+            { "value": "4", "label": "Semarang" },
+            { "value": "5", "label": "Yogyakarta" }
+          ]
+        },
+        {
+          "id": "S10b",
+          "code": "S10b",
+          "text": "Kecamatan",
+          "type": "text",
+          "required": true,
+          "placeholder": "Masukkan nama kecamatan..."
+        },
+        {
+          "id": "S10c",
+          "code": "S10c",
+          "text": "Alamat Usaha Lengkap",
+          "type": "textarea",
+          "required": true,
+          "placeholder": "Masukkan alamat lengkap beserta RT/RW, patokan, dll..."
+        }
+      ]
+    },
+    {
+      "id": "A",
+      "title": "Profil Usaha",
+      "description": "Profil untuk pemecahan analisis.",
+      "questions": [
+        {
+          "id": "A1",
+          "code": "A1",
+          "text": "Lebih spesifik, apa yang dijual usaha ini?",
+          "type": "radio",
+          "required": true,
+          "options": [
+            { "value": "1", "label": "Sembako/kelontong (Retail)" },
+            { "value": "2", "label": "Minimarket/toko serba ada (Retail)" },
+            { "value": "3", "label": "Pakaian & aksesori (Retail)" },
+            { "value": "4", "label": "Elektronik & pulsa (Retail)" },
+            { "value": "5", "label": "Kosmetik & obat (Retail)" },
+            { "value": "6", "label": "Bahan bangunan/alat (Retail)" },
+            { "value": "7", "label": "Retail lainnya" },
+            { "value": "11", "label": "Warung/rumah makan (F&B)" },
+            { "value": "12", "label": "Kafe/kedai kopi (F&B)" },
+            { "value": "13", "label": "Kaki lima/gerobak (F&B)" },
+            { "value": "14", "label": "Katering/pesanan (F&B)" },
+            { "value": "15", "label": "Minuman kekinian (F&B)" },
+            { "value": "16", "label": "Bakery/kue (F&B)" },
+            { "value": "17", "label": "F&B lainnya" }
+          ]
+        },
+        {
+          "id": "A2",
+          "code": "A2",
+          "text": "Kira-kira berapa rata-rata omzet (total penjualan) usaha ini per bulan?",
+          "type": "radio",
+          "required": true,
+          "options": [
+            { "value": "1", "label": "Kurang dari Rp10 juta" },
+            { "value": "2", "label": "Rp10–25 juta" },
+            { "value": "3", "label": "Rp25–50 juta" },
+            { "value": "4", "label": "Rp50–100 juta" },
+            { "value": "5", "label": "Rp100–150 juta" },
+            { "value": "6", "label": "Rp150-300 juta" },
+            { "value": "7", "label": "Rp300-500 juta" },
+            { "value": "8", "label": "Rp500 juta - 1 milyar" },
+            { "value": "9", "label": "Lebih dari Rp1 milyar" },
+            { "value": "98", "label": "Menolak" }
+          ]
+        },
+        {
+          "id": "A3",
+          "code": "A3",
+          "text": "Berapa orang yang bekerja di usaha ini, termasuk keluarga yang membantu dan Bapak/Ibu sendiri?",
+          "type": "radio",
+          "required": true,
+          "options": [
+            { "value": "1", "label": "Hanya sendiri" },
+            { "value": "2", "label": "2–3 orang" },
+            { "value": "3", "label": "4–5 orang" },
+            { "value": "4", "label": "6–10 orang" },
+            { "value": "5", "label": "Lebih dari 10 orang" }
+          ]
+        },
+        {
+          "id": "A4",
+          "code": "A4",
+          "text": "Rata-rata berapa transaksi penjualan per hari pada hari biasa?",
+          "type": "radio",
+          "required": true,
+          "options": [
+            { "value": "1", "label": "Kurang dari 20" },
+            { "value": "2", "label": "20–50" },
+            { "value": "3", "label": "51–100" },
+            { "value": "4", "label": "101–200" },
+            { "value": "5", "label": "Lebih dari 200" }
+          ]
+        },
+        {
+          "id": "A5",
+          "code": "A5",
+          "text": "Rata-rata nilai satu kali transaksi pembeli?",
+          "type": "radio",
+          "required": true,
+          "options": [
+            { "value": "1", "label": "Kurang dari Rp20 ribu" },
+            { "value": "2", "label": "Rp20–50 ribu" },
+            { "value": "3", "label": "Rp50–100 ribu" },
+            { "value": "4", "label": "Rp100–500 ribu" },
+            { "value": "5", "label": "Lebih dari Rp500 ribu" }
+          ]
+        },
+        {
+          "id": "A8",
+          "code": "A8",
+          "text": "Apakah usaha saat ini memiliki pinjaman atau pembiayaan? Dari mana?",
+          "type": "checkbox",
+          "required": true,
+          "options": [
+            { "value": "1", "label": "Tidak ada" },
+            { "value": "2", "label": "KUR/pinjaman bank BRI" },
+            { "value": "3", "label": "Pinjaman bank lain" },
+            { "value": "4", "label": "Koperasi/BPR" },
+            { "value": "5", "label": "Pinjaman online/fintech" },
+            { "value": "6", "label": "Paylater/kartu kredit" },
+            { "value": "7", "label": "Keluarga/teman" },
+            { "value": "8", "label": "Rentenir/informal" },
+            { "value": "98", "label": "Menolak" }
+          ]
+        }
+      ]
+    }
+  ]
+}

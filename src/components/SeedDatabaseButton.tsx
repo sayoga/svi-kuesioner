@@ -37,9 +37,16 @@ export function SeedDatabaseButton({
 
     let isMounted = true;
     async function checkExistingData() {
+      if (!db) {
+        if (isMounted) {
+          setHasData(true);
+          setIsChecking(false);
+        }
+        return;
+      }
       try {
-        const surveysRef = collection(db, 'surveys');
-        const q = query(surveysRef, limit(1));
+        const formsRef = collection(db, 'forms');
+        const q = query(formsRef, limit(1));
         const snapshot = await getDocs(q);
         if (isMounted) {
           setHasData(!snapshot.empty);

@@ -79,8 +79,11 @@ export async function logActivity(
     }
 
     // 2. Fallback to client Firestore SDK
-    const fallbackRef = await addDoc(collection(db, AUDIT_COLLECTION), logData);
-    return fallbackRef.id;
+    if (db) {
+      const fallbackRef = await addDoc(collection(db, AUDIT_COLLECTION), logData);
+      return fallbackRef.id;
+    }
+    return null;
   } catch (error) {
     console.error('Failed to record audit log:', error);
     return null;
@@ -129,32 +132,36 @@ export async function getAuditLogs(maxLogs = 50): Promise<AuditLogRecord[]> {
     }
 
     // 2. Fallback via Client SDK
-    const q = query(
-      collection(db, AUDIT_COLLECTION),
-      orderBy('timestamp', 'desc'),
-      firestoreLimit(maxLogs)
-    );
-    const querySnapshot = await getDocs(q);
+    if (db) {
+      const q = query(
+        collection(db, AUDIT_COLLECTION),
+        orderBy('timestamp', 'desc'),
+        firestoreLimit(maxLogs)
+      );
+      const querySnapshot = await getDocs(q);
 
-    return querySnapshot.docs.map((docSnap) => {
-      const data = docSnap.data();
-      let details = data.details || '';
-      if (typeof details === 'string' && (details.startsWith('{') || details.startsWith('['))) {
-        try {
-          details = JSON.parse(details);
-        } catch {
-          // keep string
+      return querySnapshot.docs.map((docSnap) => {
+        const data = docSnap.data();
+        let details = data.details || '';
+        if (typeof details === 'string' && (details.startsWith('{') || details.startsWith('['))) {
+          try {
+            details = JSON.parse(details);
+          } catch {
+            // keep string
+          }
         }
-      }
 
-      return {
-        id: docSnap.id,
-        action: data.action || 'ACTIVITY',
-        performedBy: data.performedBy || 'Unknown',
-        details,
-        timestamp: data.timestamp || data.created_at || new Date().toISOString(),
-      };
-    });
+        return {
+          id: docSnap.id,
+          action: data.action || 'ACTIVITY',
+          performedBy: data.performedBy || 'Unknown',
+          details,
+          timestamp: data.timestamp || data.created_at || new Date().toISOString(),
+        };
+      });
+    }
+
+    return [];
   } catch (error) {
     console.error('Error fetching audit logs:', error);
     return [];

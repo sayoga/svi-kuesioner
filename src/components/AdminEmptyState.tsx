@@ -25,9 +25,13 @@ export function AdminEmptyState({
 
     let isMounted = true;
     async function checkSurveys() {
+      if (!db) {
+        if (isMounted) setHasData(true);
+        return;
+      }
       try {
-        const surveysRef = collection(db, 'surveys');
-        const q = query(surveysRef, limit(1));
+        const formsRef = collection(db, 'forms');
+        const q = query(formsRef, limit(1));
         const snapshot = await getDocs(q);
         if (isMounted) {
           setHasData(!snapshot.empty);

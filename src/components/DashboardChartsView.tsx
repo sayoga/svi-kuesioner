@@ -40,10 +40,12 @@ import {
   AreaChart,
   Area,
 } from 'recharts';
-import type { FormAnalytics } from '@/types/response';
+import type { FormRecord } from '@/types/form';
+import type { FormAnalytics, QuestionAnalytics } from '@/types/response';
 
 interface DashboardChartsViewProps {
   analytics: FormAnalytics;
+  form?: FormRecord;
 }
 
 // Diversified Complementary Chart Palettes
@@ -67,19 +69,54 @@ const CHART_BAR_COLORS = [
   '#f59e0b', // Chart 6: Amber / Gold
 ];
 
-export function DashboardChartsView({ analytics }: DashboardChartsViewProps) {
+export function DashboardChartsView({ analytics, form }: DashboardChartsViewProps) {
   const { resolvedTheme } = useTheme();
   const isDark = resolvedTheme === 'dark';
 
   const [chartTypeMap, setChartTypeMap] = useState<Record<string, 'bar' | 'pie'>>({});
 
-  const choiceQuestions = analytics.questions.filter((q) =>
-    ['radio', 'checkbox', 'dropdown'].includes(q.type)
-  );
+  // Ekstrak dari modules jika ada, jika tidak, gunakan array questions lama
+  const allQuestions =
+    form?.modules && form.modules.length > 0
+      ? form.modules.flatMap((module) => module.questions || [])
+      : (form?.questions || []);
 
-  const textQuestions = analytics.questions.filter((q) =>
-    ['text', 'textarea'].includes(q.type)
-  );
+  const choiceQuestions: QuestionAnalytics[] = analytics.questions.length > 0
+    ? analytics.questions.filter((q) =>
+        ['radio', 'checkbox', 'dropdown'].includes(q.type)
+      )
+    : allQuestions
+        .filter((q: any) => ['radio', 'checkbox', 'dropdown'].includes(q.type))
+        .map((q: any) => ({
+          q_id: String(q.id || q.q_id || ''),
+          label: String(q.text || q.label || ''),
+          type: q.type,
+          totalAnswered: 0,
+          optionsCount: (q.options || []).reduce((acc: Record<string, number>, opt: any) => {
+            const label = typeof opt === 'string' ? opt : opt?.label || String(opt);
+            acc[label] = 0;
+            return acc;
+          }, {} as Record<string, number>),
+        }));
+
+  const textQuestions: QuestionAnalytics[] = analytics.questions.length > 0
+    ? analytics.questions.filter((q) =>
+        ['text', 'textarea', 'number'].includes(q.type)
+      )
+    : allQuestions
+        .filter((q: any) => ['text', 'textarea', 'number'].includes(q.type))
+        .map((q: any) => ({
+          q_id: String(q.id || q.q_id || ''),
+          label: String(q.text || q.label || ''),
+          type: q.type,
+          totalAnswered: 0,
+          textAnswers: [],
+        }));
+
+  const totalQuestionsCount =
+    allQuestions.length > 0
+      ? allQuestions.length
+      : analytics.questions.length;
 
   const toggleChartType = (q_id: string, type: 'bar' | 'pie') => {
     setChartTypeMap((prev) => ({
@@ -304,7 +341,7 @@ export function DashboardChartsView({ analytics }: DashboardChartsViewProps) {
             </div>
           </div>
           <div className="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white relative z-10">
-            {analytics.questions.length}
+            {totalQuestionsCount}
           </div>
           <p className="text-xs text-slate-600 dark:text-slate-400 mt-2 relative z-10 font-medium">
             {choiceQuestions.length} Pilihan Ganda &bull; {textQuestions.length} Isian Teks
@@ -579,7 +616,8 @@ export function DashboardChartsView({ analytics }: DashboardChartsViewProps) {
             choiceQuestions.map((q, idx) => {
               const currentChartType = chartTypeMap[q.q_id] || (idx % 2 === 0 ? 'bar' : 'pie');
 
-              const optionsData = Object.entries(q.optionsCount || {}).map(([name, count]) => {
+              const optionsData = Object.entries(q.optionsCount || {}).map(([name, countVal]) => {
+                const count = Number(countVal) || 0;
                 const total = q.totalAnswered > 0 ? q.totalAnswered : 1;
                 const percentage = Math.round((count / total) * 100);
                 return {

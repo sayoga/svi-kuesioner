@@ -1,0 +1,301 @@
+{
+  "id": "bri-umkm-2026",
+  "title": "Survei Layanan Perbankan UMKM BRI",
+  "description": "Kuesioner evaluasi dan peningkatan kualitas layanan produk perbankan bagi pelaku Usaha Mikro, Kecil, dan Menengah (UMKM) PT Bank Rakyat Indonesia (Persero) Tbk.",
+  "version": "1.0.0",
+  "modules": [
+    {
+      "id": "S",
+      "title": "Screening & Penapisan Responden",
+      "description": "Bagian penapisan untuk memastikan responden memenuhi kriteria target populasi survei UMKM BRI.",
+      "questions": [
+        {
+          "id": "S1",
+          "code": "S.1",
+          "text": "Apakah Anda merupakan pemilik, pengelola, atau pengambil keputusan utama dalam operasional usaha ini?",
+          "instruction": "Pilih salah satu jawaban yang paling tepat.",
+          "type": "radio",
+          "required": true,
+          "options": [
+            {
+              "value": "1",
+              "label": "Ya, saya pemilik / pengelola utama usaha",
+              "skipToQuestionId": "S2"
+            },
+            {
+              "value": "2",
+              "label": "Bukan, saya hanya staf operasional biasa",
+              "terminate": true,
+              "terminationReason": "Terima kasih atas partisipasi Anda. Responden survei ini disyaratkan merupakan pemilik atau pengelola utama usaha."
+            }
+          ]
+        },
+        {
+          "id": "S2",
+          "code": "S.2",
+          "text": "Berapa lama usaha Anda telah berjalan atau beroperasi secara aktif?",
+          "instruction": "Pilih salah satu durasi operasional.",
+          "type": "radio",
+          "required": true,
+          "options": [
+            {
+              "value": "1",
+              "label": "Kurang dari 6 bulan",
+              "terminate": true,
+              "terminationReason": "Mohon maaf, survei ini membutuhkan responden yang telah menjalankan usaha minimal selama 6 bulan berturut-turut."
+            },
+            {
+              "value": "2",
+              "label": "6 bulan sampai 1 tahun"
+            },
+            {
+              "value": "3",
+              "label": "1 tahun sampai 3 tahun"
+            },
+            {
+              "value": "4",
+              "label": "Lebih dari 3 tahun"
+            }
+          ]
+        },
+        {
+          "id": "S3",
+          "code": "S.3",
+          "text": "Berdasarkan estimasi rata-rata omzet (penjualan kotor) tahunan, masuk dalam kategori manakah usaha Anda?",
+          "instruction": "Kriteria mengacu pada klasifikasi regulasi UMKM di Indonesia.",
+          "type": "radio",
+          "required": true,
+          "options": [
+            {
+              "value": "mikro",
+              "label": "Usaha Mikro",
+              "subLabel": "Omzet tahunan sampai dengan Rp 2 Miliar"
+            },
+            {
+              "value": "kecil",
+              "label": "Usaha Kecil",
+              "subLabel": "Omzet tahunan lebih dari Rp 2 Miliar s.d. Rp 15 Miliar"
+            },
+            {
+              "value": "menengah",
+              "label": "Usaha Menengah",
+              "subLabel": "Omzet tahunan lebih dari Rp 15 Miliar s.d. Rp 50 Miliar"
+            },
+            {
+              "value": "besar",
+              "label": "Usaha Korporasi / Besar",
+              "subLabel": "Omzet tahunan di atas Rp 50 Miliar",
+              "terminate": true,
+              "terminationReason": "Kuesioner ini dirancang khusus untuk segmen Usaha Mikro, Kecil, dan Menengah (UMKM)."
+            }
+          ]
+        },
+        {
+          "id": "S4",
+          "code": "S.4",
+          "text": "Apakah usaha Anda saat ini aktif menggunakan produk atau layanan dari Bank BRI (misalnya rekening simpanan, pinjaman, QRIS, BRImo, atau EDC)?",
+          "instruction": "Pilih status kepemilikan rekening/layanan perbankan BRI Anda.",
+          "type": "radio",
+          "required": true,
+          "options": [
+            {
+              "value": "aktif",
+              "label": "Ya, saat ini aktif menggunakan layanan Bank BRI",
+              "skipToModuleId": "A"
+            },
+            {
+              "value": "pernah",
+              "label": "Pernah menggunakan, namun saat ini sudah tidak aktif",
+              "skipToModuleId": "A"
+            },
+            {
+              "value": "tidak_pernah",
+              "label": "Tidak pernah menggunakan produk/layanan Bank BRI",
+              "terminate": true,
+              "terminationReason": "Terima kasih atas waktu Anda. Survei ini ditujukan bagi nasabah aktif atau yang pernah bermitra dengan Bank BRI."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "A",
+      "title": "Profil Usaha",
+      "description": "Informasi umum mengenai profil, bidang operasional, dan kanal transaksi usaha Anda.",
+      "questions": [
+        {
+          "id": "A1",
+          "code": "A.1",
+          "text": "Apa nama usaha atau merek dagang bisnis Anda saat ini?",
+          "instruction": "Tuliskan nama usaha yang dikenal umum oleh pelanggan.",
+          "type": "text",
+          "required": true,
+          "placeholder": "Contoh: Warung Kopi Barokah, Toko Kelontong Bu Siti"
+        },
+        {
+          "id": "A2",
+          "code": "A.2",
+          "text": "Apa sektor atau bidang usaha utama yang dijalankan?",
+          "instruction": "Pilih satu bidang usaha yang memberikan kontribusi pendapatan terbesar.",
+          "type": "radio",
+          "required": true,
+          "options": [
+            {
+              "value": "perdagangan",
+              "label": "Perdagangan / Retail / Grosir",
+              "subLabel": "Toko kelontong, sembako, pakaian, bahan bangunan, dsb"
+            },
+            {
+              "value": "kuliner",
+              "label": "Kuliner / Makanan & Minuman",
+              "subLabel": "Restoran, kafe, warung makan, catering, jajanan pasar"
+            },
+            {
+              "value": "pertanian",
+              "label": "Pertanian, Perkebunan, Peternakan, atau Perikanan"
+            },
+            {
+              "value": "jasa",
+              "label": "Jasa & Layanan",
+              "subLabel": "Bengkel, salon/barbershop, binatu/laundry, ekspedisi/logistik"
+            },
+            {
+              "value": "manufaktur",
+              "label": "Industri Pengolahan / Kerajinan / Manufaktur Rumahan"
+            },
+            {
+              "value": "lainnya",
+              "label": "Lainnya",
+              "hasFreeText": true,
+              "freeTextPlaceholder": "Sebutkan bidang usaha Anda..."
+            }
+          ]
+        },
+        {
+          "id": "A3",
+          "code": "A.3",
+          "text": "Dokumen legalitas atau perizinan apa saja yang telah dimiliki oleh usaha Anda saat ini?",
+          "instruction": "Dapat memilih lebih dari satu (multi-pilihan).",
+          "type": "checkbox",
+          "required": true,
+          "options": [
+            {
+              "value": "nib",
+              "label": "NIB (Nomor Induk Berusaha)"
+            },
+            {
+              "value": "sku",
+              "label": "SKU (Surat Keterangan Usaha) dari Kelurahan/Kecamatan"
+            },
+            {
+              "value": "npwp",
+              "label": "NPWP atas nama pribadi atau badan usaha"
+            },
+            {
+              "value": "sertifikasi",
+              "label": "Sertifikat PIRT / Halal / BPOM / ISO"
+            },
+            {
+              "value": "belum_ada",
+              "label": "Belum memiliki izin resmi tertulis"
+            }
+          ],
+          "validation": {
+            "minSelect": 1,
+            "customMessage": "Mohon pilih minimal satu opsi kelengkapan legalitas."
+          }
+        },
+        {
+          "id": "A4",
+          "code": "A.4",
+          "text": "Berapa jumlah total tenaga kerja (karyawan) yang membantu usaha Anda saat ini?",
+          "instruction": "Termasuk anggota keluarga yang turut bekerja penuh waktu (isikan 0 jika bekerja sendiri).",
+          "type": "number",
+          "required": true,
+          "placeholder": "0",
+          "validation": {
+            "min": 0,
+            "max": 500,
+            "customMessage": "Jumlah tenaga kerja harus berupa angka minimal 0."
+          }
+        },
+        {
+          "id": "A5",
+          "code": "A.5",
+          "text": "Kanal penjualan atau pemasaran mana saja yang aktif Anda gunakan untuk menjangkau pembeli?",
+          "instruction": "Pilih semua kanal yang relevan.",
+          "type": "checkbox",
+          "required": true,
+          "options": [
+            {
+              "value": "offline",
+              "label": "Toko fisik / Kios / Lapak luring"
+            },
+            {
+              "value": "ecommerce",
+              "label": "E-Commerce (Tokopedia, Shopee, Lazada, Blibli)"
+            },
+            {
+              "value": "social_commerce",
+              "label": "Social Commerce (WhatsApp Business, Instagram, TikTok Shop)"
+            },
+            {
+              "value": "website",
+              "label": "Website atau aplikasi mandiri"
+            }
+          ]
+        },
+        {
+          "id": "A6",
+          "code": "A.6",
+          "text": "Produk atau fasilitas perbankan BRI apa saja yang aktif Anda manfaatkan dalam kegiatan operasional bisnis?",
+          "instruction": "Pilih semua layanan yang digunakan.",
+          "type": "checkbox",
+          "required": true,
+          "options": [
+            {
+              "value": "rekening",
+              "label": "Rekening Simpanan BRI (Simpedes / BritAma Bisnis / Giro)"
+            },
+            {
+              "value": "pinjaman",
+              "label": "Fasilitas Pinjaman (KUR BRI / Kupedes / Briguna)"
+            },
+            {
+              "value": "brimo",
+              "label": "Aplikasi BRImo (Mobile Banking)"
+            },
+            {
+              "value": "qris",
+              "label": "QRIS Merchant BRI / Mesin EDC BRI"
+            },
+            {
+              "value": "agen_brilink",
+              "label": "Kemitraan AgenBRILink"
+            }
+          ]
+        },
+        {
+          "id": "A7",
+          "code": "A.7",
+          "text": "Seberapa puas Anda terhadap kemudahan dan kecepatan penerimaan pembayaran digital menggunakan QRIS / EDC BRI?",
+          "instruction": "Beri nilai dari 1 (Sangat Tidak Puas) hingga 5 (Sangat Puas).",
+          "type": "scale",
+          "required": true,
+          "displayCondition": {
+            "field": "A6",
+            "operator": "contains",
+            "value": "qris"
+          },
+          "scaleConfig": {
+            "min": 1,
+            "max": 5,
+            "minLabel": "Sangat Tidak Puas",
+            "neutralLabel": "Cukup Puas",
+            "maxLabel": "Sangat Puas"
+          }
+        }
+      ]
+    }
+  ]
+}

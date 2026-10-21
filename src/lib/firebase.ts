@@ -6,39 +6,42 @@ const firebaseConfig = {
   apiKey:
     process.env.NEXT_PUBLIC_FIREBASE_API_KEY ||
     process.env.FIREBASE_API_KEY ||
-    'demo-api-key',
+    'AIzaSyDYhrFnN79EYN1sf0W2MAM634vKgDy4SeU',
   authDomain:
     process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN ||
     process.env.FIREBASE_AUTH_DOMAIN ||
-    `${process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || 'svi-kuesioner-demo'}.firebaseapp.com`,
+    'sharing-vision-3fb3a.firebaseapp.com',
   projectId:
     process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID ||
     process.env.FIREBASE_PROJECT_ID ||
-    'svi-kuesioner-demo',
+    'sharing-vision-3fb3a',
   storageBucket:
     process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET ||
     process.env.FIREBASE_STORAGE_BUCKET ||
-    `${process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || 'svi-kuesioner-demo'}.appspot.com`,
+    'sharing-vision-3fb3a.firebasestorage.app',
   messagingSenderId:
     process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID ||
     process.env.FIREBASE_MESSAGING_SENDER_ID ||
-    '123456789',
+    '130099179975',
   appId:
     process.env.NEXT_PUBLIC_FIREBASE_APP_ID ||
     process.env.FIREBASE_APP_ID ||
-    '1:123456789:web:abcdef',
+    '1:130099179975:web:661090e4e59731e14aa9e2',
   measurementId:
     process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID ||
     process.env.FIREBASE_MEASUREMENT_ID,
 };
 
 // Singleton pattern to prevent re-initializing Firebase in Next.js Hot Reload
-export const app: FirebaseApp =
-  getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
+export const app: FirebaseApp = !getApps().length
+  ? initializeApp(firebaseConfig)
+  : getApp();
 
 // Initialize Cloud Firestore and Auth
 export const db: Firestore = getFirestore(app);
 export const auth: Auth = getAuth(app);
+
+export default db;
 
 export interface ApiErrorResponse {
   status: number;

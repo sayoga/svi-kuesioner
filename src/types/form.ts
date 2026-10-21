@@ -1,3 +1,5 @@
+import type { Module } from './survey';
+
 export type QuestionType =
   | 'text'
   | 'textarea'
@@ -23,6 +25,9 @@ export interface FormRecord {
   description: string;
   is_active: boolean;
   questions: Question[];
+  modules?: Module[];
+  version?: string;
+  [key: string]: unknown;
 }
 
 export type CreateFormInput = {
@@ -30,6 +35,9 @@ export type CreateFormInput = {
   description?: string;
   is_active?: boolean;
   questions: Question[];
+  modules?: Module[];
+  version?: string;
+  [key: string]: unknown;
 };
 
 export type UpdateFormInput = Partial<CreateFormInput>;

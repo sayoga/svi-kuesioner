@@ -31,7 +31,9 @@ async function ActiveFormsList() {
   try {
     const res = await formsService.getForms({ isActive: true, perPage: 6 });
     activeForms = res.items || [];
-  } catch {
+    console.log('[ActiveFormsList] Fetched forms:', activeForms.map(f => ({ id: f.id, title: f.title, questionsCount: f.questions?.length, modulesCount: f.modules?.length })));
+  } catch (err) {
+    console.error('[ActiveFormsList] Error fetching forms:', err);
     activeForms = [];
   }
 
@@ -57,7 +59,10 @@ async function ActiveFormsList() {
                 Aktif
               </span>
               <span className="text-xs font-medium text-slate-500">
-                {form.questions.length} Pertanyaan
+                {(form.questions && form.questions.length > 0)
+                  ? form.questions.length
+                  : form.modules?.reduce((acc, m) => acc + (m.questions?.length || 0), 0) || 0}{' '}
+                Pertanyaan
               </span>
             </div>
 

@@ -63,10 +63,15 @@ async function DashboardPageContent({ searchParams }: PageProps) {
   }
 
   let analytics = null;
+  let form = null;
   let errorMsg: string | null = null;
 
   try {
-    analytics = await responsesService.getFormAnalytics(formId);
+    const { formsService } = await import('@/services/forms.service');
+    [analytics, form] = await Promise.all([
+      responsesService.getFormAnalytics(formId),
+      formsService.getFormById(formId).catch(() => null),
+    ]);
   } catch (err: unknown) {
     errorMsg = err instanceof Error ? err.message : 'Gagal memuat analitik kuesioner.';
   }
@@ -90,7 +95,7 @@ async function DashboardPageContent({ searchParams }: PageProps) {
     );
   }
 
-  return <DashboardChartsView analytics={analytics} />;
+  return <DashboardChartsView analytics={analytics} form={form || undefined} />;
 }
 
 export default function AdminDashboardPage({ searchParams }: PageProps) {
